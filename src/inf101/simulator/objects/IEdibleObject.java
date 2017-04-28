@@ -26,4 +26,6 @@ public interface IEdibleObject extends ISimObject {
 	 *         correlated with size)
 	 */
 	double getNutritionalValue();
+	
+	
 }

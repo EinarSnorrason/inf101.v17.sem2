@@ -15,6 +15,8 @@ import javafx.scene.paint.Color;
 
 public class SimAnimal extends AbstractMovingObject {
 	private static final double defaultSpeed = 1.0;
+	private static final double VIEW_ANGLE = 90;
+	private static final double VIEW_DISTANCE = 400;
 	private Habitat habitat;
 	private Image img;
 	
@@ -34,6 +36,10 @@ public class SimAnimal extends AbstractMovingObject {
 	public void draw(GraphicsContext context) {
 		
 		super.draw(context);
+		
+		// Draw viewing angle
+		context.setStroke(Color.GREEN.deriveColor(0.0, 1.0, 1.0, 0.5));
+		GraphicsHelper.strokeArcAt(context, getWidth()/2, getHeight()/2, VIEW_DISTANCE, 0, VIEW_ANGLE);
 		// Draws the image (flips it if it would be upside-down)
 		double angle = getDirection().toAngle();
 		if (angle <90 && angle >-90){
@@ -48,9 +54,11 @@ public class SimAnimal extends AbstractMovingObject {
 	}
 
 	public IEdibleObject getClosestFood() {
-		for (ISimObject obj : habitat.nearbyObjects(this, getRadius()+400)) {
-			if(obj instanceof IEdibleObject)
+		for (ISimObject obj : habitat.nearbyObjects(this, getRadius()+VIEW_DISTANCE)) {
+			if(obj instanceof IEdibleObject &&
+					Math.abs(getDirection().toAngle() - directionTo(obj).toAngle())<VIEW_ANGLE/2){
 				return (IEdibleObject) obj;
+			}
 		}
 		
 		return null;
@@ -82,6 +90,7 @@ public class SimAnimal extends AbstractMovingObject {
 		
 		// If you find food, go towards it
 		IEdibleObject food = getBestFood();
+		
 		if (food != null && habitat.contains(food.getPosition())){
 			dir = dir.turnTowards(directionTo(food), 2);
 			if (distanceToTouch(food) <=0){
