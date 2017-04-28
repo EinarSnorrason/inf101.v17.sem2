@@ -32,7 +32,7 @@ public class SimAnimal extends AbstractMovingObject {
 
 	@Override
 	public void draw(GraphicsContext context) {
-		this.
+		
 		super.draw(context);
 		// Draws the image (flips it if it would be upside-down)
 		double angle = getDirection().toAngle();
@@ -100,7 +100,9 @@ public class SimAnimal extends AbstractMovingObject {
 		accelerateTo(defaultSpeed, 0.1);
 		
 		// Lose energy over time
-		energy -= 0.05;
+		if (energy < 0){
+			energy -= 0.05;
+		}
 
 		super.step();
 	}
