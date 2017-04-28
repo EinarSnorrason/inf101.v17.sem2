@@ -36,6 +36,15 @@ public abstract class AbstractMovingObject extends AbstractSimObject implements 
 			speed -= Math.min(increment, speed - targetSpeed);
 		}
 	}
+	
+	/**
+	 * Shows if given object is visible by the given view angle
+	 * @param obj
+	 * @return true if object is visible
+	 */
+	protected boolean canSee(ISimObject obj, double view_angle){
+		return Math.abs(getDirection().toAngle() - directionTo(obj).toAngle())<view_angle/2;
+	}
 
 	@Override
 	public void draw(GraphicsContext context) {

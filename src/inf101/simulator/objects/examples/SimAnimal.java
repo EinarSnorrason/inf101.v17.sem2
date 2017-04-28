@@ -52,11 +52,15 @@ public class SimAnimal extends AbstractMovingObject {
 	public IEdibleObject getBestFood() {
 		return getClosestFood();
 	}
-
+	
+	/**
+	 * Gives the closest food object in the animal's view cone
+	 * @return
+	 */
 	public IEdibleObject getClosestFood() {
 		for (ISimObject obj : habitat.nearbyObjects(this, getRadius()+VIEW_DISTANCE)) {
-			if(obj instanceof IEdibleObject &&
-					Math.abs(getDirection().toAngle() - directionTo(obj).toAngle())<VIEW_ANGLE/2){
+			if(obj instanceof IEdibleObject && canSee(obj, VIEW_ANGLE) &&
+					habitat.contains(obj.getPosition())){
 				return (IEdibleObject) obj;
 			}
 		}
@@ -91,7 +95,7 @@ public class SimAnimal extends AbstractMovingObject {
 		// If you find food, go towards it
 		IEdibleObject food = getBestFood();
 		
-		if (food != null && habitat.contains(food.getPosition())){
+		if (food != null){
 			dir = dir.turnTowards(directionTo(food), 2);
 			if (distanceToTouch(food) <=0){
 				// Stop moving when eating
