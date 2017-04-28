@@ -17,15 +17,22 @@ public class SimAnimal extends AbstractMovingObject {
 	private static final double defaultSpeed = 1.0;
 	private Habitat habitat;
 	private Image img;
+	
+	/**
+	 * Tracks energy of SimAnimal.
+	 */
+	private double energy;
 
 	public SimAnimal(Position pos, Habitat hab) {
 		super(new Direction(0), pos, defaultSpeed);
 		this.habitat = hab;
 		img = MediaHelper.getImage("pipp.png");
 	}
+	
 
 	@Override
 	public void draw(GraphicsContext context) {
+		this.
 		super.draw(context);
 		// Draws the image (flips it if it would be upside-down)
 		double angle = getDirection().toAngle();
@@ -79,7 +86,7 @@ public class SimAnimal extends AbstractMovingObject {
 			dir = dir.turnTowards(directionTo(food), 2);
 			if (distanceToTouch(food) <=0){
 				// Stop moving when eating
-				food.eat(0.5);
+				energy += food.eat(0.5);
 				accelerateTo(0, 0.3);
 			}
 			else if (dir.equals(directionTo(food))){
@@ -91,6 +98,9 @@ public class SimAnimal extends AbstractMovingObject {
 
 
 		accelerateTo(defaultSpeed, 0.1);
+		
+		// Lose energy over time
+		energy -= 0.05;
 
 		super.step();
 	}
