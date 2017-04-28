@@ -27,7 +27,12 @@ public class SimAnimal extends AbstractMovingObject {
 	@Override
 	public void draw(GraphicsContext context) {
 		super.draw(context);
-		// Draws the image
+		// Draws the image (flips it if it would be upside-down)
+		double angle = getDirection().toAngle();
+		if (angle <90 && angle >-90){
+			context.scale(1, -1);
+			context.translate(0, -getHeight());
+		}
 		context.drawImage(img,0,0,getWidth(),getHeight());
 	}
 
