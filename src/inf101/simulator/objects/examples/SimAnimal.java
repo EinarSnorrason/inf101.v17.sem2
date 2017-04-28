@@ -10,21 +10,25 @@ import inf101.simulator.objects.IEdibleObject;
 import inf101.simulator.objects.ISimObject;
 import inf101.simulator.objects.SimEvent;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class SimAnimal extends AbstractMovingObject {
 	private static final double defaultSpeed = 1.0;
 	private Habitat habitat;
+	private Image img;
 
 	public SimAnimal(Position pos, Habitat hab) {
 		super(new Direction(0), pos, defaultSpeed);
 		this.habitat = hab;
+		img = MediaHelper.getImage("pipp.png");
 	}
 
 	@Override
 	public void draw(GraphicsContext context) {
 		super.draw(context);
-		context.fillOval(0, 0, getWidth(), getHeight());
+		// Draws the image
+		context.drawImage(img,0,0,getWidth(),getHeight());
 	}
 
 	public IEdibleObject getBestFood() {
