@@ -72,6 +72,22 @@ public class SimAnimal extends AbstractMovingObject {
 				accelerateTo(5 * defaultSpeed, 0.3);
 			}
 		}
+		
+		// If you find food, go towards it
+		IEdibleObject food = getBestFood();
+		if (food != null && habitat.contains(food.getPosition())){
+			dir = dir.turnTowards(directionTo(food), 2);
+			if (distanceToTouch(food) <=0){
+				// Stop moving when eating
+				food.eat(0.5);
+				accelerateTo(0, 0.3);
+			}
+			else if (dir.equals(directionTo(food))){
+				// Speed up when going towards food
+				accelerateTo(2 * defaultSpeed, 0.3);
+			}
+		}
+		
 
 
 		accelerateTo(defaultSpeed, 0.1);
