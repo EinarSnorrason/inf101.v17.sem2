@@ -38,12 +38,7 @@ public class SimAnimal extends AbstractMovingObject {
 
 		super.draw(context);
 		
-		if (opposite != null){
-			Position oppositePos = getPosition().move(opposite, 100);
-			context.setStroke(Color.YELLOW);
-			context.strokeLine(0, 0, oppositePos.getX()-getX(), oppositePos.getY()-getY());
-			
-		}
+		
 		
 		// Draw viewing angle
 		context.setStroke(Color.GREEN.deriveColor(0.0, 1.0, 1.0, 0.5));
