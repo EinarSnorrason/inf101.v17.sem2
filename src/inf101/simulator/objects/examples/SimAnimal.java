@@ -1,5 +1,8 @@
 package inf101.simulator.objects.examples;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import inf101.simulator.Direction;
 import inf101.simulator.GraphicsHelper;
 import inf101.simulator.Habitat;
@@ -7,6 +10,7 @@ import inf101.simulator.MediaHelper;
 import inf101.simulator.Position;
 import inf101.simulator.SimMain;
 import inf101.simulator.objects.AbstractMovingObject;
+import inf101.simulator.objects.EdibleComparator;
 import inf101.simulator.objects.IEdibleObject;
 import inf101.simulator.objects.ISimObject;
 import inf101.simulator.objects.SimEvent;
@@ -21,6 +25,7 @@ public class SimAnimal extends AbstractMovingObject {
 	private Habitat habitat;
 	private Image img;
 	private Direction opposite;
+	private EdibleComparator foodComparator = new EdibleComparator(); 
 
 	/**
 	 * Tracks energy of SimAnimal.
@@ -53,8 +58,28 @@ public class SimAnimal extends AbstractMovingObject {
 		context.drawImage(img, 0, 0, getWidth(), getHeight());
 	}
 
+	/**
+	 * Returns most nutritious visible food
+	 * @return
+	 */
 	public IEdibleObject getBestFood() {
-		return getClosestFood();
+		ArrayList<IEdibleObject> food = new ArrayList<>();
+		for (ISimObject obj : habitat.nearbyObjects(this, getRadius() + VIEW_DISTANCE)){
+			if (obj instanceof IEdibleObject && canSee(obj)){
+				food.add((IEdibleObject) obj);
+			}
+		}
+		Collections.sort(food,foodComparator);
+		return food.size()>0 ? food.get(food.size()-1) : null;
+	}
+	
+	/**
+	 * Shows if given object is visible by the given view angle
+	 * @param obj
+	 * @return true if object is visible
+	 */
+	protected boolean canSee(ISimObject obj){
+		return Math.abs(getDirection().toAngle() - directionTo(obj).toAngle())<VIEW_ANGLE/2;
 	}
 
 	/**
@@ -64,7 +89,7 @@ public class SimAnimal extends AbstractMovingObject {
 	 */
 	public IEdibleObject getClosestFood() {
 		for (ISimObject obj : habitat.nearbyObjects(this, getRadius() + VIEW_DISTANCE)) {
-			if (obj instanceof IEdibleObject && canSee(obj, VIEW_ANGLE) && habitat.contains(obj.getPosition())) {
+			if (obj instanceof IEdibleObject && canSee(obj) && habitat.contains(obj.getPosition())) {
 				return (IEdibleObject) obj;
 			}
 		}
@@ -103,7 +128,7 @@ public class SimAnimal extends AbstractMovingObject {
 
 	private void avoidRepellants() {
 		for (ISimObject obj : habitat.nearbyObjects(this, getRadius() + VIEW_DISTANCE)) {
-			if (obj instanceof SimRepellant && canSee(obj, VIEW_ANGLE) && habitat.contains(obj.getPosition())) {
+			if (obj instanceof SimRepellant && canSee(obj) && habitat.contains(obj.getPosition())) {
 				opposite = directionTo(obj).turnBack();
 				
 				dir = dir.turnTowards(opposite, 1+4*(1-distanceTo(obj)/(VIEW_DISTANCE)));
