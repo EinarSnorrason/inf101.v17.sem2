@@ -31,6 +31,7 @@ public class SimAnimal extends AbstractMovingObject {
 		super(new Direction(0), pos, defaultSpeed);
 		this.habitat = hab;
 		img = MediaHelper.getImage("pipp.png");
+		habitat.addListener(this, event -> say(event.getType()));
 	}
 
 	@Override
@@ -90,6 +91,8 @@ public class SimAnimal extends AbstractMovingObject {
 			if (distanceToTouch(food) <= 0) {
 				// Stop moving when eating
 				energy += food.eat(0.5);
+				SimEvent event = new SimEvent(this,"Eating",null,null);
+				habitat.triggerEvent(event);
 				accelerateTo(0, 0.1);
 			} else if (dir.equals(directionTo(food))) {
 				// Speed up when going towards food
