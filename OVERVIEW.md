@@ -20,6 +20,12 @@ Student:
 
 7. Hvis det fantes public-metoder for å endre retning og posisjon, kunne objekter ha posisjonen sin endret av andre deler av programmet. Dette vil skape problemer, og det er best hvis hvert objekt er ansvarlig for sin egen bevegelse.
 
+### 1.7: Noen få ekstra spørsmål
+
+Dette designet er lagd sånn at koden kan bli brukt for mange forskjellige objekter, og at det skal bli lett å utvide oppførselen etterpå. Grensesnittene betyr at disse nye objektene kan lett settes inn med de andre, fordi hovedprogrammet vet at de kan bruke de samme metodene. Det går an å gjøre dette på andre måter, for eksempel kode hvert objekt fra bunnen av, men dette ville være mye vanskeligere å utvide fordi det er mye mer arbeid å lage en ny klasse. I tillegg, så må man endre hvert objekt hvis man vil endre noe til felles for alle.
+
+Uten grensesnitt vil hovedklassen ikke vite kunne garantere at objektene har samme oppførsel, som ville gjøre det mye vanskeligere å samle dem i en klasse.
+
 ## Kilder til media
 
 * Rammeverkkode: © Anya Helene Bagge (basert på tidligere utgaver, laget av Anya Helene Bagge, Anneli Weiss og andre).
