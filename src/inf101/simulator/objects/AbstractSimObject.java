@@ -204,6 +204,7 @@ public abstract class AbstractSimObject implements ISimObject {
 	protected void reposition(Position newPos) {
 		pos = newPos;
 	}
+	
 
 	/**
 	 * Display a short message
