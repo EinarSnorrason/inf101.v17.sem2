@@ -96,10 +96,13 @@ public class SimAnimal extends AbstractMovingObject {
 
 		return null;
 	}
+	
+	
 
 	@Override
 	public double getHeight() {
 		return 50;
+		
 	}
 
 	@Override
