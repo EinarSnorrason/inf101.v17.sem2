@@ -76,8 +76,6 @@ public class Pacman extends AbstractMovingObject {
 		context.setStroke(Color.GREEN.deriveColor(0.0, 1.0, 1.0, 0.5));
 		GraphicsHelper.strokeArcAt(context, getWidth() / 2, getHeight() / 2, VIEW_DISTANCE, 0, VIEW_ANGLE);
 		// Draws the image
-		double angle = getDirection().toAngle();
-
 		context.drawImage(img, 0, 0, getWidth(), getHeight());
 	}
 
@@ -130,7 +128,7 @@ public class Pacman extends AbstractMovingObject {
 		powered = true;
 		powerTimer = POWER_DURATION;
 		// the "true" in the data field lets ghosts know to be scared
-		habitat.triggerEvent(new SimEvent(this, "PowerUp", null, true));
+		habitat.triggerEvent(new SimEvent(this, "PowerUp", null, 0));
 	}
 
 	/**
@@ -139,7 +137,7 @@ public class Pacman extends AbstractMovingObject {
 	private void powerDown() {
 		powered = false;
 		// false in data field lets ghosts chase pacman again
-		habitat.triggerEvent(new SimEvent(this, "PowerDown", null, false));
+		habitat.triggerEvent(new SimEvent(this, "PowerDown", null, 1));
 	}
 
 	/**
@@ -165,12 +163,21 @@ public class Pacman extends AbstractMovingObject {
 	 */
 	private void avoidGhosts() {
 		for (ISimObject obj : nearby) {
-			if (obj instanceof SimRepellant) {
+			if (canSee(obj) && obj instanceof AbstractGhost) {
 				Direction opposite = directionTo(obj).turnBack();
 				dir = dir.turnTowards(opposite, 1+4*(1-distanceTo(obj)/(VIEW_DISTANCE)));
 			}
 		}
 	}
+	
+	@Override
+	public void destroy(){
+		// Lets ghosts know pacman is dead
+		habitat.triggerEvent(new SimEvent(this, "Dead", null, 2));
+		super.destroy();
+	}
+	
+	
 
 	/**
 	 * Pacman behaviour logic
@@ -184,6 +191,10 @@ public class Pacman extends AbstractMovingObject {
 		// go towards center if we're close to the border
 		if (!habitat.contains(getPosition(), getRadius() * 1.2)) {
 			turnTowards(directionTo(habitat.getCenter()), 5);
+			if (!habitat.contains(getPosition(), getRadius())) {
+				// we're actually outside
+				accelerateTo(5 * SPEED, 0.3);
+			}
 		}
 		// List objects in visible distance
 		nearby = habitat.nearbyObjects(this, VIEW_DISTANCE);
@@ -202,6 +213,8 @@ public class Pacman extends AbstractMovingObject {
 				powerDown();
 			}
 		}
+		
+		accelerateTo(SPEED,0.2);
 
 		super.step();
 	}
