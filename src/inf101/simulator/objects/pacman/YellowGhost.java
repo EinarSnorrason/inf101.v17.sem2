@@ -1,27 +1,19 @@
 package inf101.simulator.objects.pacman;
 
-
 import inf101.simulator.Habitat;
 import inf101.simulator.Position;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-/**
- * Red ghost: Always follows pacman if he is visible
- * @author Einar Snorrason
- *
- */
-public class RedGhost extends AbstractGhost {
-	
+public class YellowGhost extends AbstractGhost {
 
-	public RedGhost(Position pos, Habitat hab) {
+	public YellowGhost(Position pos, Habitat hab) {
 		super(pos, hab);
 	}
-	
 	@Override
 	public void draw(GraphicsContext context){
 		super.draw(context);
-		context.setFill(Color.RED);
+		context.setFill(Color.YELLOW);
 		context.fillOval(0, 0, getWidth(), getHeight());
 	}
 	

@@ -4,10 +4,13 @@ import inf101.simulator.objects.examples.Blob;
 import inf101.simulator.objects.examples.SimAnimal;
 import inf101.simulator.objects.examples.SimFeed;
 import inf101.simulator.objects.examples.SimRepellant;
+import inf101.simulator.objects.pacman.BlueGhost;
 import inf101.simulator.objects.pacman.Pacman;
 import inf101.simulator.objects.pacman.Pellet;
+import inf101.simulator.objects.pacman.PinkGhost;
 import inf101.simulator.objects.pacman.RedGhost;
 import inf101.simulator.objects.pacman.SuperPellet;
+import inf101.simulator.objects.pacman.YellowGhost;
 
 public class Setup {
 	
@@ -15,6 +18,9 @@ public class Setup {
 	public static void setup(SimMain main, Habitat habitat) {
 		habitat.addObject(new Pacman(new Position(400, 400), habitat));
 		habitat.addObject(new RedGhost(main.randomPos(), habitat));
+		habitat.addObject(new BlueGhost(main.randomPos(), habitat));
+		habitat.addObject(new PinkGhost(main.randomPos(), habitat));
+		habitat.addObject(new YellowGhost(main.randomPos(), habitat));
 		//habitat.addObject(new Blob(new Direction(0), new Position(400, 400), 1));
 		
 

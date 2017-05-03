@@ -18,7 +18,7 @@ import javafx.scene.paint.Color;
  */
 
 public class AbstractGhost extends AbstractMovingObject implements IEdibleObject {
-	private static final double SPEED = 1.7;
+	private static final double SPEED = 1.4;
 	private static final double TURN_SPEED = 1.0;
 	/**
 	 * Distance where objects become visible
@@ -36,7 +36,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	 */
 	private static final double SENSE_DISTANCE = 100.0;
 	private static final double SIZE = 50.0;
-	private Habitat habitat;
+	protected Habitat habitat;
 
 	/**
 	 * The score pacman gets if he eats a ghost

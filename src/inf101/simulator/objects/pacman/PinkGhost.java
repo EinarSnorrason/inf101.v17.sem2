@@ -1,27 +1,26 @@
 package inf101.simulator.objects.pacman;
 
-
 import inf101.simulator.Habitat;
 import inf101.simulator.Position;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 /**
- * Red ghost: Always follows pacman if he is visible
+ * Pink ghost. Aims at a point in front of pacman
  * @author Einar Snorrason
  *
  */
-public class RedGhost extends AbstractGhost {
-	
 
-	public RedGhost(Position pos, Habitat hab) {
+public class PinkGhost extends AbstractGhost {
+
+	public PinkGhost(Position pos, Habitat hab) {
 		super(pos, hab);
 	}
 	
 	@Override
 	public void draw(GraphicsContext context){
 		super.draw(context);
-		context.setFill(Color.RED);
+		context.setFill(Color.PINK);
 		context.fillOval(0, 0, getWidth(), getHeight());
 	}
 	
@@ -29,7 +28,8 @@ public class RedGhost extends AbstractGhost {
 	public void step(){
 		if (pacman != null){
 			if (canSee(pacman)){
-				setTarget(directionTo(pacman));
+				Position pos = pacman.getPosition().move(pacman.getDirection(), 200);
+				setTarget(directionTo(pos));
 			}
 			
 		}
