@@ -23,15 +23,10 @@ public class BlueGhost extends AbstractGhost {
 	public BlueGhost(Position pos, Habitat hab) {
 		super(pos, hab);
 		chaseTimer = CHASE_TIME;
+		ghostColor = Color.CYAN;
 	}
 
-	@Override
-	public void draw(GraphicsContext context) {
-		super.draw(context);
-		context.setFill(Color.CYAN);
-		context.fillOval(0, 0, getWidth(), getHeight());
-	}
-
+	
 	@Override
 	public void step() {
 		// Chase pacman if in chase mode

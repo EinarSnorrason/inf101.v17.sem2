@@ -18,7 +18,7 @@ import javafx.scene.paint.Color;
  */
 
 public class AbstractGhost extends AbstractMovingObject implements IEdibleObject {
-	private static final double SPEED = 1.4;
+	private static final double SPEED = 1.2;
 	private static final double TURN_SPEED = 1.0;
 	/**
 	 * Distance where objects become visible
@@ -60,6 +60,14 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	private int respawnTimer = 0;
 	private Direction target;
 
+	/**
+	 * True when pacman has a super pellet
+	 */
+	private boolean scared = false;
+
+	protected Color ghostColor = (Color.RED.deriveColor(0.0, 1.0, 1.0, 0.5));
+	protected Color scaredGhostColor = (Color.BLUE.deriveColor(0.0, 1.0, 1.0, 0.5));
+
 	public AbstractGhost(Position pos, Habitat hab) {
 		super(new Direction(Math.random() * 360), pos, SPEED);
 		this.habitat = hab;
@@ -76,14 +84,25 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	public double getWidth() {
 		return 50;
 	}
-	
+
 	/**
 	 * Handles events from the listener
 	 */
-	public void handleEvent(Object obj){
-		int event = (Integer) obj;
-		if (event == 2){
+	public void handleEvent(Object obj) {
+
+		switch ((Integer) obj) {
+		case 0:
+			scared = true;
+			break;
+
+		case 1:
+			scared = false;
+			break;
+		case 2:
+			// Causes ghost to kill itself
 			pacman = this;
+		default:
+			break;
 		}
 	}
 
@@ -97,13 +116,25 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 		pacman = habitat.filterObjects((ISimObject obj) -> obj instanceof Pacman).get(0);
 		return pacman != null;
 	}
-	
+
 	@Override
-	public void draw(GraphicsContext context){
+	public void draw(GraphicsContext context) {
 		super.draw(context);
 		// Draw viewing angle
+
 		context.setStroke(Color.RED.deriveColor(0.0, 1.0, 1.0, 0.5));
 		GraphicsHelper.strokeArcAt(context, getWidth() / 2, getHeight() / 2, VIEW_DISTANCE, 0, VIEW_ANGLE);
+
+		// Draw ghost
+		if (!alive) {
+			context.setFill(Color.GRAY);
+		} else if (!scared) {
+			context.setFill(ghostColor);
+		} else {
+			context.setFill(scaredGhostColor);
+		}
+		context.fillOval(0, 0, getWidth(), getHeight());
+
 	}
 
 	/**
@@ -130,14 +161,14 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 
 		// Save pacman in the class if we haven't
 		if (pacman == null) {
-			if (!fetchPacman()){
+			if (!fetchPacman()) {
 				return;
 			}
-			
+
 		}
 
 		// If the ghost is touching pacman, kill him
-		if (contains(pacman.getPosition()) && alive) {
+		if (contains(pacman.getPosition()) && alive && !scared) {
 			// Ghosts can't eat!
 			pacman.destroy();
 		}
@@ -151,10 +182,25 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 		}
 
 		// Move toward target
-		if (distanceTo(pacman) < SENSE_DISTANCE) {
+		if (scared) {
+			if (canSee(pacman)) {
+				Direction opposite = directionTo(pacman).turnBack();
+				dir = dir.turnTowards(opposite, TURN_SPEED);
+			} else {
+				turnTowards(target, TURN_SPEED);
+			}
+		} else if (distanceTo(pacman) < SENSE_DISTANCE) {
 			turnTowards(directionTo(pacman), TURN_SPEED);
 		} else if (target != null) {
 			turnTowards(target, TURN_SPEED);
+		}
+
+		// Decrement respawn timer if neccesary
+		if (!alive) {
+			respawnTimer--;
+			if (respawnTimer <= 0) {
+				alive = true;
+			}
 		}
 
 		super.step();
@@ -178,7 +224,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	@Override
 	public double eat(double howMuch) {
 		alive = false;
-
+		respawnTimer = RESPAWN_TIME;
 		return SCORE;
 	}
 

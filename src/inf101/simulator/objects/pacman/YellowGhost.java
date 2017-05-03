@@ -5,26 +5,38 @@ import inf101.simulator.Position;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+/**
+ * Yellow ghost. Wanders around aimlessly unless pacman is in the sense range
+ * 
+ * @author Einar Snorrason
+ *
+ */
+
 public class YellowGhost extends AbstractGhost {
+
+	private static final int TARGET_TIME = 500;
+
+	private Position targetPos;
+	private int targetTimer;
 
 	public YellowGhost(Position pos, Habitat hab) {
 		super(pos, hab);
+		targetTimer = TARGET_TIME;
+		ghostColor = Color.YELLOW;
 	}
+
 	@Override
-	public void draw(GraphicsContext context){
-		super.draw(context);
-		context.setFill(Color.YELLOW);
-		context.fillOval(0, 0, getWidth(), getHeight());
-	}
-	
-	@Override
-	public void step(){
-		if (pacman != null){
-			if (canSee(pacman)){
-				setTarget(directionTo(pacman));
-			}
-			
+	public void step() {
+
+		// Choose new target when timer reaches 0
+		if (targetTimer <= 0 || targetPos == null) {
+			targetPos = new Position(Math.random() * habitat.getWidth(), Math.random() * habitat.getHeight());
+			targetTimer = TARGET_TIME;
 		}
+		
+		setTarget(directionTo(targetPos));
+		targetTimer--;
+
 		super.step();
 	}
 

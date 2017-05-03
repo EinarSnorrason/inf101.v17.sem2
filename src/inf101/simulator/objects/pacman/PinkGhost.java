@@ -15,13 +15,7 @@ public class PinkGhost extends AbstractGhost {
 
 	public PinkGhost(Position pos, Habitat hab) {
 		super(pos, hab);
-	}
-	
-	@Override
-	public void draw(GraphicsContext context){
-		super.draw(context);
-		context.setFill(Color.PINK);
-		context.fillOval(0, 0, getWidth(), getHeight());
+		ghostColor = Color.PINK;
 	}
 	
 	@Override

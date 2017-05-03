@@ -35,7 +35,7 @@ public class Pacman extends AbstractMovingObject {
 	 * Distance where objects can be sensed from any direction (Simulates smell,
 	 * hearing etc)
 	 */
-	private static final double SENSE_DISTANCE = 100.0;
+	private static final double SENSE_DISTANCE = 50.0;
 	private static final double SIZE = 50.0;
 	private static final double TURN_SPEED = 1.0;
 	private static final int POWER_DURATION = 2000;
@@ -189,8 +189,8 @@ public class Pacman extends AbstractMovingObject {
 		this.turnTowards(directionTo(habitat.getCenter()), 0.5);
 
 		// go towards center if we're close to the border
-		if (!habitat.contains(getPosition(), getRadius() * 1.2)) {
-			turnTowards(directionTo(habitat.getCenter()), 5);
+		if (!habitat.contains(getPosition(), getRadius() * 2)) {
+			turnTowards(directionTo(habitat.getCenter()), 10);
 			if (!habitat.contains(getPosition(), getRadius())) {
 				// we're actually outside
 				accelerateTo(5 * SPEED, 0.3);

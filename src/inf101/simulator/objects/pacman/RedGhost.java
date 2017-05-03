@@ -16,14 +16,9 @@ public class RedGhost extends AbstractGhost {
 
 	public RedGhost(Position pos, Habitat hab) {
 		super(pos, hab);
+		ghostColor = Color.RED;
 	}
 	
-	@Override
-	public void draw(GraphicsContext context){
-		super.draw(context);
-		context.setFill(Color.RED);
-		context.fillOval(0, 0, getWidth(), getHeight());
-	}
 	
 	@Override
 	public void step(){
