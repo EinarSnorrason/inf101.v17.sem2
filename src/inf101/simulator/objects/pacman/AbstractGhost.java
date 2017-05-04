@@ -18,7 +18,7 @@ import javafx.scene.paint.Color;
  */
 
 public class AbstractGhost extends AbstractMovingObject implements IEdibleObject {
-	private static final double SPEED = 1.2;
+	private static final double SPEED = 1.0;
 	private static final double TURN_SPEED = 1.0;
 	/**
 	 * Distance where objects become visible
@@ -42,7 +42,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	 * The score pacman gets if he eats a ghost
 	 */
 	private static final double SCORE = 200.0;
-	private static final int RESPAWN_TIME = 1000;
+	private static final int RESPAWN_TIME = 500;
 
 	/**
 	 * We interact with pacman a lot, so we'll save him here
@@ -64,6 +64,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	 * True when pacman has a super pellet
 	 */
 	private boolean scared = false;
+	private double currentSpeed;
 
 	protected Color ghostColor = (Color.RED.deriveColor(0.0, 1.0, 1.0, 0.5));
 	protected Color scaredGhostColor = (Color.BLUE.deriveColor(0.0, 1.0, 1.0, 0.5));
@@ -72,6 +73,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 		super(new Direction(Math.random() * 360), pos, SPEED);
 		this.habitat = hab;
 		habitat.addListener(this, event -> handleEvent(event.getData()));
+		currentSpeed = SPEED;
 
 	}
 
@@ -170,6 +172,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 		// If the ghost is touching pacman, kill him
 		if (contains(pacman.getPosition()) && alive && !scared) {
 			// Ghosts can't eat!
+			System.out.println(currentSpeed);
 			pacman.destroy();
 		}
 
@@ -181,15 +184,15 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 			turnTowards(directionTo(habitat.getCenter()), 5);
 		}
 
-		// Move toward target
-		if (scared) {
+		// Move toward target or flee if not able to kill
+		if (scared || !alive) {
 			if (canSee(pacman)) {
 				Direction opposite = directionTo(pacman).turnBack();
 				dir = dir.turnTowards(opposite, TURN_SPEED);
-			} else {
+			} else if (target != null){
 				turnTowards(target, TURN_SPEED);
 			}
-		} else if (distanceTo(pacman) < SENSE_DISTANCE) {
+		} else if (distanceTo(pacman) < SENSE_DISTANCE + getRadius()) {
 			turnTowards(directionTo(pacman), TURN_SPEED);
 		} else if (target != null) {
 			turnTowards(target, TURN_SPEED);
@@ -202,6 +205,10 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 				alive = true;
 			}
 		}
+		
+		// Slowly speed up!
+		currentSpeed += 0.00001;
+		accelerateTo(currentSpeed, 0.1);
 
 		super.step();
 	}

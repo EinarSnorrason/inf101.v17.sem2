@@ -35,10 +35,10 @@ public class Pacman extends AbstractMovingObject {
 	 * Distance where objects can be sensed from any direction (Simulates smell,
 	 * hearing etc)
 	 */
-	private static final double SENSE_DISTANCE = 50.0;
+	private static final double SENSE_DISTANCE = 75.0;
 	private static final double SIZE = 50.0;
-	private static final double TURN_SPEED = 1.0;
-	private static final int POWER_DURATION = 2000;
+	private static final double TURN_SPEED = 1.5;
+	private static final int POWER_DURATION = 1000;
 	private Habitat habitat;
 	private Image img;
 	private int score;
@@ -89,7 +89,7 @@ public class Pacman extends AbstractMovingObject {
 		if (!habitat.contains(obj.getPosition())) {
 			return false;
 		}
-		if (obj.getPosition().distanceTo(getPosition()) < SENSE_DISTANCE) {
+		if (obj.getPosition().distanceTo(getPosition()) < SENSE_DISTANCE + getRadius()) {
 			return true;
 		}
 		return Math.abs(getDirection().toAngle() - directionTo(obj).toAngle()) < VIEW_ANGLE / 2;
@@ -127,7 +127,7 @@ public class Pacman extends AbstractMovingObject {
 	private void powerUp() {
 		powered = true;
 		powerTimer = POWER_DURATION;
-		// the "true" in the data field lets ghosts know to be scared
+		// the "0" in the data field lets ghosts know to be scared
 		habitat.triggerEvent(new SimEvent(this, "PowerUp", null, 0));
 	}
 
@@ -136,7 +136,7 @@ public class Pacman extends AbstractMovingObject {
 	 */
 	private void powerDown() {
 		powered = false;
-		// false in data field lets ghosts chase pacman again
+		// 1 in data field lets ghosts chase pacman again
 		habitat.triggerEvent(new SimEvent(this, "PowerDown", null, 1));
 	}
 
@@ -174,6 +174,7 @@ public class Pacman extends AbstractMovingObject {
 	public void destroy(){
 		// Lets ghosts know pacman is dead
 		habitat.triggerEvent(new SimEvent(this, "Dead", null, 2));
+		System.out.println(score);
 		super.destroy();
 	}
 	

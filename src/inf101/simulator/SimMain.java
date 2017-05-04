@@ -283,6 +283,10 @@ public class SimMain extends Application {
 			} else if (code == KeyCode.P) {
 				paused = !paused;
 				event.consume();
+			} else if (code == KeyCode.R){
+				// Reset map
+				Setup.restart(this, habitat);
+				
 			} else if (code == KeyCode.COMMA) {
 				showAnnotations = !showAnnotations;
 				event.consume();

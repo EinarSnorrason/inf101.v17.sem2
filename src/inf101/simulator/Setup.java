@@ -23,9 +23,9 @@ public class Setup {
 		habitat.addObject(new YellowGhost(main.randomPos(), habitat));
 		//habitat.addObject(new Blob(new Direction(0), new Position(400, 400), 1));
 		
-
-		for (int i = 0; i < 3; i++)
-			habitat.addObject(new SimRepellant(main.randomPos()));
+		habitat.addObject(new SuperPellet(main.randomPos()));
+		for (int i = 0; i < 10; i++)
+			habitat.addObject(new Pellet(main.randomPos()));
 
 		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new Pellet(pos), "Pellet", Pellet.PAINTER);
 		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new Pacman(pos , hab)    , "Pacman", "pipp.png");
@@ -36,14 +36,35 @@ public class Setup {
 		//SimMain.registerSimObjectFactory((Position pos,  Habitat hab) -> new SimAnimal(pos,hab),"SimAnimal", "pipp.png");
 		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new RedGhost(pos,hab), "Red ghost", SimRepellant.PAINTER);
 	}
+	
+	/** This method is called when the simulation restarts */
+	public static void restart(SimMain main, Habitat habitat){
+		habitat.removeAll();
+		habitat.addObject(new Pacman(new Position(400, 400), habitat));
+		habitat.addObject(new RedGhost(main.randomPos(), habitat));
+		habitat.addObject(new BlueGhost(main.randomPos(), habitat));
+		habitat.addObject(new PinkGhost(main.randomPos(), habitat));
+		habitat.addObject(new YellowGhost(main.randomPos(), habitat));
+		//habitat.addObject(new Blob(new Direction(0), new Position(400, 400), 1));
+		
+
+		habitat.addObject(new SuperPellet(main.randomPos()));
+		for (int i = 0; i < 10; i++)
+			habitat.addObject(new Pellet(main.randomPos()));
+	}
 
 	/**
 	 * This method is called for each step, you can use it to add objects at
 	 * random intervals
 	 */
 	public static void step(SimMain main, Habitat habitat) {
-		if (main.getRandom().nextInt(300) == 0)
-			//habitat.addObject(new SimFeed(main.randomPos(), main.getRandom().nextDouble()*2+0.5));
-			habitat.addObject(new Pellet(main.randomPos()));
+		if (habitat.allObjects().size() < 50){
+			if (main.getRandom().nextInt(20) == 0){
+				habitat.addObject(new SuperPellet(main.randomPos())) ;
+			} else {
+				habitat.addObject(new Pellet(main.randomPos()));
+			}
+		}
+		
 	}
 }
