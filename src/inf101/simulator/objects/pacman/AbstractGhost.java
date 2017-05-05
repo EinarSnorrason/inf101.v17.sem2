@@ -35,7 +35,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	 * Distance where objects can be sensed from any direction (Simulates smell,
 	 * hearing etc)
 	 */
-	private static final double SENSE_DISTANCE = 100.0;
+	protected static final double SENSE_DISTANCE = 100.0;
 	private static final double SIZE = 50.0;
 	protected Habitat habitat;
 
@@ -193,8 +193,6 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 			} else if (target != null){
 				turnTowards(target, TURN_SPEED);
 			}
-		} else if (distanceTo(pacman) < SENSE_DISTANCE + getRadius()) {
-			turnTowards(directionTo(pacman), TURN_SPEED);
 		} else if (target != null) {
 			turnTowards(target, TURN_SPEED);
 		}
