@@ -128,7 +128,7 @@ public class Pacman extends AbstractMovingObject {
 		powered = true;
 		powerTimer = POWER_DURATION;
 		// the "0" in the data field lets ghosts know to be scared
-		habitat.triggerEvent(new SimEvent(this, "PowerUp", null, 0));
+		habitat.triggerEvent(new SimEvent(this, "PowerUp", null, null));
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class Pacman extends AbstractMovingObject {
 	private void powerDown() {
 		powered = false;
 		// 1 in data field lets ghosts chase pacman again
-		habitat.triggerEvent(new SimEvent(this, "PowerDown", null, 1));
+		habitat.triggerEvent(new SimEvent(this, "PowerDown", null, null));
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class Pacman extends AbstractMovingObject {
 	@Override
 	public void destroy(){
 		// Lets ghosts know pacman is dead
-		habitat.triggerEvent(new SimEvent(this, "Dead", null, 2));
+		habitat.triggerEvent(new SimEvent(this, "Dead", null, null));
 		System.out.println(score);
 		super.destroy();
 	}
@@ -190,7 +190,7 @@ public class Pacman extends AbstractMovingObject {
 		this.turnTowards(directionTo(habitat.getCenter()), 0.5);
 
 		// go towards center if we're close to the border
-		if (!habitat.contains(getPosition(), getRadius() * 2)) {
+		if (!habitat.contains(getPosition(), getRadius() * 1.2)) {
 			turnTowards(directionTo(habitat.getCenter()), 10);
 			if (!habitat.contains(getPosition(), getRadius())) {
 				// we're actually outside

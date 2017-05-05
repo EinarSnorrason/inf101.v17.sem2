@@ -7,6 +7,7 @@ import inf101.simulator.Position;
 import inf101.simulator.objects.AbstractMovingObject;
 import inf101.simulator.objects.IEdibleObject;
 import inf101.simulator.objects.ISimObject;
+import inf101.simulator.objects.SimEvent;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -72,7 +73,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	public AbstractGhost(Position pos, Habitat hab) {
 		super(new Direction(Math.random() * 360), pos, SPEED);
 		this.habitat = hab;
-		habitat.addListener(this, event -> handleEvent(event.getData()));
+		habitat.addListener(this, event -> handleEvent(event));
 		currentSpeed = SPEED;
 
 	}
@@ -90,17 +91,17 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	/**
 	 * Handles events from the listener
 	 */
-	public void handleEvent(Object obj) {
+	public void handleEvent(SimEvent event) {
 
-		switch ((Integer) obj) {
-		case 0:
+		switch (event.getType()) {
+		case "PowerUp":
 			scared = true;
 			break;
 
-		case 1:
+		case "PowerDown":
 			scared = false;
 			break;
-		case 2:
+		case "Dead":
 			// Causes ghost to kill itself
 			pacman = this;
 		default:
@@ -207,7 +208,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 		}
 		
 		// Slowly speed up!
-		currentSpeed += 0.00001;
+		currentSpeed += 0.00005;
 		accelerateTo(currentSpeed, 0.1);
 
 		super.step();
