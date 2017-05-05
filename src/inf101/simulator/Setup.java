@@ -9,6 +9,7 @@ import inf101.simulator.objects.pacman.Pacman;
 import inf101.simulator.objects.pacman.Pellet;
 import inf101.simulator.objects.pacman.PinkGhost;
 import inf101.simulator.objects.pacman.RedGhost;
+import inf101.simulator.objects.pacman.Scoreboard;
 import inf101.simulator.objects.pacman.SuperPellet;
 import inf101.simulator.objects.pacman.YellowGhost;
 
@@ -16,16 +17,7 @@ public class Setup {
 	
 	/** This method is called when the simulation starts */
 	public static void setup(SimMain main, Habitat habitat) {
-		habitat.addObject(new Pacman(new Position(400, 400), habitat));
-		habitat.addObject(new RedGhost(main.randomPos(), habitat));
-		habitat.addObject(new BlueGhost(main.randomPos(), habitat));
-		habitat.addObject(new PinkGhost(main.randomPos(), habitat));
-		habitat.addObject(new YellowGhost(main.randomPos(), habitat));
-		//habitat.addObject(new Blob(new Direction(0), new Position(400, 400), 1));
-		
-		habitat.addObject(new SuperPellet(main.randomPos()));
-		for (int i = 0; i < 10; i++)
-			habitat.addObject(new Pellet(main.randomPos()));
+		pacmanStart(main,habitat);
 
 		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new Pellet(pos), "Pellet", Pellet.PAINTER);
 		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new Pacman(pos , hab)    , "Pacman", "pipp.png");
@@ -40,17 +32,7 @@ public class Setup {
 	/** This method is called when the simulation restarts */
 	public static void restart(SimMain main, Habitat habitat){
 		habitat.removeAll();
-		habitat.addObject(new Pacman(new Position(400, 400), habitat));
-		habitat.addObject(new RedGhost(main.randomPos(), habitat));
-		habitat.addObject(new BlueGhost(main.randomPos(), habitat));
-		habitat.addObject(new PinkGhost(main.randomPos(), habitat));
-		habitat.addObject(new YellowGhost(main.randomPos(), habitat));
-		//habitat.addObject(new Blob(new Direction(0), new Position(400, 400), 1));
-		
-
-		habitat.addObject(new SuperPellet(main.randomPos()));
-		for (int i = 0; i < 10; i++)
-			habitat.addObject(new Pellet(main.randomPos()));
+		pacmanStart(main,habitat);
 	}
 
 	/**
@@ -66,5 +48,24 @@ public class Setup {
 			}
 		}
 		
+	}
+	
+	/**
+	 * Adds all objects needed for pacman game
+	 * @param main
+	 * @param habitat
+	 */
+	private static void pacmanStart(SimMain main, Habitat habitat){
+		habitat.addObject(new Pacman(new Position(400, 400), habitat));
+		habitat.addObject(new Scoreboard(new Position(0,habitat.getHeight()-habitat.getHeight()/20), habitat));
+		habitat.addObject(new RedGhost(main.randomPos(), habitat));
+		habitat.addObject(new BlueGhost(main.randomPos(), habitat));
+		habitat.addObject(new PinkGhost(main.randomPos(), habitat));
+		habitat.addObject(new YellowGhost(main.randomPos(), habitat));
+		//habitat.addObject(new Blob(new Direction(0), new Position(400, 400), 1));
+		
+		habitat.addObject(new SuperPellet(main.randomPos()));
+		for (int i = 0; i < 10; i++)
+			habitat.addObject(new Pellet(main.randomPos()));
 	}
 }

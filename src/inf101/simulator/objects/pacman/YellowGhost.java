@@ -33,11 +33,14 @@ public class YellowGhost extends AbstractGhost {
 			targetPos = new Position(Math.random() * habitat.getWidth(), Math.random() * habitat.getHeight());
 			targetTimer = TARGET_TIME;
 		}
-		if (distanceTo(pacman) < SENSE_DISTANCE + getRadius()) {
-			setTarget(directionTo(pacman));
-		}
-		else {
-			setTarget(directionTo(targetPos));	
+
+		if (pacman != null) {
+			if (distanceTo(pacman) < SENSE_DISTANCE + getRadius()) {
+				setTarget(directionTo(pacman));
+			} else {
+				setTarget(directionTo(targetPos));
+			}
+
 		}
 		targetTimer--;
 

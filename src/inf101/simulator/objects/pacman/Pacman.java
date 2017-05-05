@@ -154,6 +154,8 @@ public class Pacman extends AbstractMovingObject {
 					powerUp();
 				}
 				score += food.eat(1);
+				// Update display board
+				habitat.triggerEvent(new SimEvent(this,"Points",null,score));
 			}
 		}
 	}
