@@ -81,11 +81,12 @@ public class Pacman extends AbstractMovingObject {
 	@Override
 	public void draw(GraphicsContext context) {
 		super.draw(context);
-		// Draw viewing angle
-		context.setStroke(Color.GREEN.deriveColor(0.0, 1.0, 1.0, 0.5));
-		GraphicsHelper.strokeArcAt(context, getWidth() / 2, getHeight() / 2, VIEW_DISTANCE, 0, VIEW_ANGLE);
-		// Draws the image
+		
 		if (!dead) {
+			// Draw viewing angle
+			context.setStroke(Color.GREEN.deriveColor(0.0, 1.0, 1.0, 0.5));
+			GraphicsHelper.strokeArcAt(context, getWidth() / 2, getHeight() / 2, VIEW_DISTANCE, 0, VIEW_ANGLE);
+			// Draws the image
 			context.drawImage(images[imageCounter / 2], 0, 0, getWidth(), getHeight());
 			imageCounter = (imageCounter + 1) % 8;
 		} else {

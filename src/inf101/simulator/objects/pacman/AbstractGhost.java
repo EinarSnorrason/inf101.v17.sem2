@@ -144,7 +144,12 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 		context.setStroke(Color.RED.deriveColor(0.0, 1.0, 1.0, 0.5));
 		GraphicsHelper.strokeArcAt(context, getWidth() / 2, getHeight() / 2, VIEW_DISTANCE, 0, VIEW_ANGLE);
 
-		
+		// Flip ghost if upside down
+		double angle = getDirection().toAngle();
+		if (angle < 90 && angle > -90) {
+			context.scale(1, -1);
+			context.translate(0, -getHeight());
+		}
 		// Draw ghost
 		if (scared) {
 			context.drawImage(scaredGhostImg, 0, 0, getWidth(), getHeight());
