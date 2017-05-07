@@ -20,7 +20,7 @@ public class YellowGhost extends AbstractGhost {
 	private int targetTimer;
 
 	public YellowGhost(Position pos, Habitat hab) {
-		super(pos, hab);
+		super(pos, hab,"yellowGhost");
 		targetTimer = TARGET_TIME;
 		ghostColor = Color.YELLOW;
 	}

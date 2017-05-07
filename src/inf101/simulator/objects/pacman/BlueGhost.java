@@ -21,7 +21,7 @@ public class BlueGhost extends AbstractGhost {
 	private Position targetPos;
 
 	public BlueGhost(Position pos, Habitat hab) {
-		super(pos, hab);
+		super(pos, hab,"blueGhost");
 		chaseTimer = CHASE_TIME;
 		ghostColor = Color.CYAN;
 	}

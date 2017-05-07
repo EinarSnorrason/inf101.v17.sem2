@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import inf101.simulator.images.ImageLoader;
 import inf101.simulator.objects.ISimObjectFactory;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -48,6 +49,7 @@ public class SimMain extends Application {
 		return instance;
 	}
 	public static void main(String[] args) {
+		
 		launch(args);
 	}
 	/**

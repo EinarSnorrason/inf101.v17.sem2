@@ -40,8 +40,12 @@ public class Pacman extends AbstractMovingObject {
 	private static final double TURN_SPEED = 1.5;
 	private static final int POWER_DURATION = 1000;
 	private Habitat habitat;
-	private Image img;
+	private Image[] images = new Image[4];
+	private Image[] deadImages = new Image[11];
+	private int imageCounter = 0;
 	private int score;
+	private int deathTimer;
+	private boolean dead = false;
 	private List<ISimObject> nearby = null;
 
 	/**
@@ -56,7 +60,12 @@ public class Pacman extends AbstractMovingObject {
 	public Pacman(Position pos, Habitat hab) {
 		super(new Direction(0), pos, SPEED);
 		this.habitat = hab;
-		img = MediaHelper.getImage("pipp.png");
+		for (int i = 1; i <= 4; i++) {
+			images[i - 1] = MediaHelper.getImage("pacman" + i + ".png");
+		}
+		for (int i = 1; i <= 11; i++) {
+			deadImages[i - 1] = MediaHelper.getImage("deadPacman" + i + ".png");
+		}
 	}
 
 	@Override
@@ -76,7 +85,12 @@ public class Pacman extends AbstractMovingObject {
 		context.setStroke(Color.GREEN.deriveColor(0.0, 1.0, 1.0, 0.5));
 		GraphicsHelper.strokeArcAt(context, getWidth() / 2, getHeight() / 2, VIEW_DISTANCE, 0, VIEW_ANGLE);
 		// Draws the image
-		context.drawImage(img, 0, 0, getWidth(), getHeight());
+		if (!dead) {
+			context.drawImage(images[imageCounter / 2], 0, 0, getWidth(), getHeight());
+			imageCounter = (imageCounter + 1) % 8;
+		} else {
+			context.drawImage(deadImages[10-deathTimer / 20], 0, 0, getWidth(), getHeight());
+		}
 	}
 
 	/**
@@ -109,7 +123,7 @@ public class Pacman extends AbstractMovingObject {
 		// Saves object as best food if it has higher nutrient content than
 		// current best food
 		for (ISimObject obj : nearby) {
-			if (obj instanceof IEdibleObject && canSee(obj) && (powered || !(obj instanceof AbstractGhost))) {
+			if (obj instanceof IEdibleObject && canSee(obj)) {
 				nutrition = ((IEdibleObject) obj).getNutritionalValue();
 				if (nutrition > bestNutrition) {
 					bestNutrition = nutrition;
@@ -155,7 +169,7 @@ public class Pacman extends AbstractMovingObject {
 				}
 				score += food.eat(1);
 				// Update display board
-				habitat.triggerEvent(new SimEvent(this,"Points",null,score));
+				habitat.triggerEvent(new SimEvent(this, "Points", null, score));
 			}
 		}
 	}
@@ -166,21 +180,22 @@ public class Pacman extends AbstractMovingObject {
 	private void avoidGhosts() {
 		for (ISimObject obj : nearby) {
 			if (canSee(obj) && obj instanceof AbstractGhost) {
-				Direction opposite = directionTo(obj).turnBack();
-				dir = dir.turnTowards(opposite, 1+4*(1-distanceTo(obj)/(VIEW_DISTANCE)));
+				if (!((AbstractGhost) obj).isScared()) {
+					Direction opposite = directionTo(obj).turnBack();
+					dir = dir.turnTowards(opposite, 1 + 4 * (1 - distanceTo(obj) / (VIEW_DISTANCE)));
+				}
 			}
 		}
 	}
-	
+
 	@Override
-	public void destroy(){
+	public void destroy() {
 		// Lets ghosts know pacman is dead
 		habitat.triggerEvent(new SimEvent(this, "Dead", null, null));
-		System.out.println(score);
-		super.destroy();
+		deathTimer = 11*10*2-1;
+		dead = true;
+
 	}
-	
-	
 
 	/**
 	 * Pacman behaviour logic
@@ -203,10 +218,7 @@ public class Pacman extends AbstractMovingObject {
 		nearby = habitat.nearbyObjects(this, VIEW_DISTANCE);
 
 		goToFood();
-
-		if (!powered){
-			avoidGhosts();
-		}
+		avoidGhosts();
 
 		// Decrement timer if needed
 		if (powerTimer > 0) {
@@ -216,10 +228,21 @@ public class Pacman extends AbstractMovingObject {
 				powerDown();
 			}
 		}
-		
-		accelerateTo(SPEED,0.2);
 
-		super.step();
+		accelerateTo(SPEED, 0.2);
+
+		// If dead, stop moving and decrement the death timer
+		if (!dead){
+			super.step();
+		} else {
+			turnTowards(new Direction(180),90);
+			deathTimer--;
+			if (deathTimer <= 0){
+				super.destroy();
+			}
+		}
+		
+		
 	}
 
 }

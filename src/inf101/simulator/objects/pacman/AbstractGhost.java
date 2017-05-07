@@ -3,12 +3,14 @@ package inf101.simulator.objects.pacman;
 import inf101.simulator.Direction;
 import inf101.simulator.GraphicsHelper;
 import inf101.simulator.Habitat;
+import inf101.simulator.MediaHelper;
 import inf101.simulator.Position;
 import inf101.simulator.objects.AbstractMovingObject;
 import inf101.simulator.objects.IEdibleObject;
 import inf101.simulator.objects.ISimObject;
 import inf101.simulator.objects.SimEvent;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 /**
@@ -69,12 +71,21 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 
 	protected Color ghostColor = (Color.RED.deriveColor(0.0, 1.0, 1.0, 0.5));
 	protected Color scaredGhostColor = (Color.BLUE.deriveColor(0.0, 1.0, 1.0, 0.5));
+	
+	protected Image ghostImg;
+	protected Image deadGhostImg;
+	protected Image scaredGhostImg;
 
-	public AbstractGhost(Position pos, Habitat hab) {
+	public AbstractGhost(Position pos, Habitat hab, String imageName) {
 		super(new Direction(Math.random() * 360), pos, SPEED);
 		this.habitat = hab;
 		habitat.addListener(this, event -> handleEvent(event));
 		currentSpeed = SPEED;
+		scaredGhostImg = MediaHelper.getImage("scaredGhost.png");
+		
+			deadGhostImg = MediaHelper.getImage("deadGhost.png");
+			ghostImg = MediaHelper.getImage(imageName+".png");
+		
 
 	}
 
@@ -104,9 +115,14 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 		case "Dead":
 			// Causes ghost to kill itself
 			pacman = this;
+			destroy();
 		default:
 			break;
 		}
+	}
+	
+	public boolean isScared(){
+		return scared || !alive;
 	}
 
 	/**
@@ -128,15 +144,15 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 		context.setStroke(Color.RED.deriveColor(0.0, 1.0, 1.0, 0.5));
 		GraphicsHelper.strokeArcAt(context, getWidth() / 2, getHeight() / 2, VIEW_DISTANCE, 0, VIEW_ANGLE);
 
+		
 		// Draw ghost
-		if (!alive) {
-			context.setFill(Color.GRAY);
-		} else if (!scared) {
-			context.setFill(ghostColor);
+		if (scared) {
+			context.drawImage(scaredGhostImg, 0, 0, getWidth(), getHeight());
+		} else if (!alive) {
+			context.drawImage(deadGhostImg, 0, 0, getWidth(), getHeight());
 		} else {
-			context.setFill(scaredGhostColor);
+			context.drawImage(ghostImg, 0, 0, getWidth(), getHeight());
 		}
-		context.fillOval(0, 0, getWidth(), getHeight());
 
 	}
 
@@ -202,12 +218,20 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 			respawnTimer--;
 			if (respawnTimer <= 0) {
 				alive = true;
+				scared = false;
 			}
 		}
 		
 		// Slowly speed up!
 		currentSpeed += 0.00005;
-		accelerateTo(currentSpeed, 0.1);
+		
+		// If dead, go faster
+		if (!alive){
+			accelerateTo(3*currentSpeed, 0.3);
+		} else {
+			accelerateTo(currentSpeed, 0.3);
+		}
+		
 
 		super.step();
 	}
@@ -230,6 +254,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	@Override
 	public double eat(double howMuch) {
 		alive = false;
+		scared = false;
 		respawnTimer = RESPAWN_TIME;
 		return SCORE;
 	}
@@ -239,7 +264,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	 */
 	@Override
 	public double getNutritionalValue() {
-		return alive ? SCORE : 0;
+		return alive && scared ? SCORE : 0;
 	}
 
 }

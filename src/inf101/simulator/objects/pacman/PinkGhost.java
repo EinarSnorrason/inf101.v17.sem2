@@ -14,7 +14,7 @@ import javafx.scene.paint.Color;
 public class PinkGhost extends AbstractGhost {
 
 	public PinkGhost(Position pos, Habitat hab) {
-		super(pos, hab);
+		super(pos, hab,"pinkGhost");
 		ghostColor = Color.PINK;
 	}
 	
