@@ -55,3 +55,5 @@ Klasser:
 * Rammeverkkode: © Anya Helene Bagge (basert på tidligere utgaver, laget av Anya Helene Bagge, Anneli Weiss og andre).
 
 * pipp.png, bakgrunn.png © Anya Helene Bagge, This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License
+
+* pacman-bilder tatt fra "Pac Man Wiki" : http://pacman.wikia.com/wiki/File:Pacman10-hp-sprite.png
