@@ -49,7 +49,6 @@ public class SimMain extends Application {
 		return instance;
 	}
 	public static void main(String[] args) {
-		
 		launch(args);
 	}
 	/**
