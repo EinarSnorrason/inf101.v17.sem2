@@ -20,13 +20,17 @@ public class Setup {
 		pacmanStart(main,habitat);
 
 		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new Pellet(pos), "Pellet", Pellet.PAINTER);
-		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new Pacman(pos , hab)    , "Pacman", "pipp.png");
+		SimMain.registerSimObjectFactory((Position pos,Habitat hab)->new SuperPellet(pos), "Super Pellet", SuperPellet.PAINTER);
+		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new Pacman(pos , hab)    , "Pacman", "pacman2.png");
 		//SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new SimFeed(pos, main.getRandom().nextDouble()*2+0.5), "SimFeed™", SimFeed.PAINTER);
 		//SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new SimRepellant(pos), "SimRepellant™",
 		//		SimRepellant.PAINTER);
-		SimMain.registerSimObjectFactory((Position pos,Habitat hab)->new SuperPellet(pos), "Super Pellet", SuperPellet.PAINTER);
 		//SimMain.registerSimObjectFactory((Position pos,  Habitat hab) -> new SimAnimal(pos,hab),"SimAnimal", "pipp.png");
-		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new RedGhost(pos,hab), "Red ghost", SimRepellant.PAINTER);
+		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new RedGhost(pos,hab), "Red ghost", "redGhost.png");
+		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new PinkGhost(pos,hab), "Pink ghost", "pinkGhost.png");
+		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new BlueGhost(pos,hab), "Blue ghost", "blueGhost.png");
+		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new YellowGhost(pos,hab), "Yellow ghost", "yellowGhost.png");
+		
 	}
 	
 	/** This method is called when the simulation restarts */
