@@ -1,8 +1,10 @@
 package inf101.simulator.objects.pacman;
 
 
+import inf101.simulator.Direction;
 import inf101.simulator.Habitat;
 import inf101.simulator.Position;
+import inf101.simulator.objects.ISimObject;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -22,11 +24,9 @@ public class RedGhost extends AbstractGhost {
 	
 	@Override
 	public void step(){
+		pacman = findPacman();
 		if (pacman != null){
-			if (canSee(pacman)){
-				setTarget(directionTo(pacman));
-			}
-			
+			setTarget(directionTo(pacman));			
 		}
 		super.step();
 	}

@@ -2,6 +2,7 @@ package inf101.simulator.objects.pacman;
 
 import inf101.simulator.Habitat;
 import inf101.simulator.Position;
+import inf101.simulator.objects.ISimObject;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -23,16 +24,16 @@ public class BlueGhost extends AbstractGhost {
 	public BlueGhost(Position pos, Habitat hab) {
 		super(pos, hab,"blueGhost");
 		chaseTimer = CHASE_TIME;
-		ghostColor = Color.CYAN;
 	}
 
 	
 	@Override
 	public void step() {
 		// Chase pacman if in chase mode
-		if (pacman != null && chasing) {
-			if (canSee(pacman)) {
-				setTarget(directionTo(pacman));
+		if (chasing) {
+			pacman = findPacman();
+			if (pacman != null){
+				setTarget(directionTo(pacman));			
 			}
 			
 		} 

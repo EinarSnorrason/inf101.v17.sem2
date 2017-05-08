@@ -26,7 +26,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	/**
 	 * Distance where objects become visible
 	 */
-	private static final double VIEW_DISTANCE = 400.0;
+	protected static final double VIEW_DISTANCE = 400.0;
 
 	/**
 	 * Angle of sight
@@ -50,7 +50,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	/**
 	 * We interact with pacman a lot, so we'll save him here
 	 */
-	protected ISimObject pacman;
+	protected IEdibleObject pacman;
 
 	/**
 	 * False if ghost has been eaten by pacman
@@ -132,7 +132,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	 * (this assumes there's only one pacman, may have to change that later)
 	 */
 	private boolean fetchPacman() {
-		pacman = habitat.filterObjects((ISimObject obj) -> obj instanceof Pacman).get(0);
+		pacman = (IEdibleObject) habitat.filterObjects((ISimObject obj) -> obj instanceof Pacman).get(0);
 		return pacman != null;
 	}
 
@@ -171,10 +171,19 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 		if (!habitat.contains(obj.getPosition())) {
 			return false;
 		}
-		if (obj.getPosition().distanceTo(getPosition()) < SENSE_DISTANCE) {
+		if (canSense(obj)) {
 			return true;
 		}
 		return Math.abs(getDirection().toAngle() - directionTo(obj).toAngle()) < VIEW_ANGLE / 2;
+	}
+	
+	/**
+	 * Checks if object is within sensing distance
+	 * @param obj
+	 * @return
+	 */
+	protected boolean canSense(ISimObject obj){
+		return obj.getPosition().distanceTo(getPosition()) < SENSE_DISTANCE;
 	}
 
 	/**
@@ -183,21 +192,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	@Override
 	public void step() {
 
-		// Save pacman in the class if we haven't
-		if (pacman == null) {
-			if (!fetchPacman()) {
-				return;
-			}
-
-		}
-
-		// If the ghost is touching pacman, kill him
-		if (contains(pacman.getPosition()) && alive && !scared) {
-			// Ghosts can't eat!
-			System.out.println(currentSpeed);
-			pacman.destroy();
-		}
-
+		
 		// by default, move slightly towards center
 		this.turnTowards(directionTo(habitat.getCenter()), 0.5);
 
@@ -208,14 +203,28 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 
 		// Move toward target or flee if not able to kill
 		if (scared || !alive) {
-			if (canSee(pacman)) {
-				Direction opposite = directionTo(pacman).turnBack();
-				dir = dir.turnTowards(opposite, TURN_SPEED);
-			} else if (target != null){
-				turnTowards(target, TURN_SPEED);
+			for (ISimObject obj: habitat.nearbyObjects(this,VIEW_DISTANCE)){
+				if (obj instanceof Pacman && canSee(obj)){
+					Direction opposite = directionTo(obj).turnBack();
+					turnTowards(opposite, TURN_SPEED);
+					
+				}
 			}
+//			if (canSee(pacman)) {
+//				Direction opposite = directionTo(pacman).turnBack();
+//				dir = dir.turnTowards(opposite, TURN_SPEED);
+//			} else if (target != null){
+//				turnTowards(target, TURN_SPEED);
+//			}
 		} else if (target != null) {
-			turnTowards(target, TURN_SPEED);
+			dir = dir.turnTowards(target, TURN_SPEED);
+			for (ISimObject obj: habitat.nearbyObjects(this,VIEW_DISTANCE)){
+				if (obj instanceof Pacman && contains(obj.getPosition())){
+					
+					((IEdibleObject) obj).eat(0);
+					
+				}
+			}
 		}
 
 		// Decrement respawn timer if neccesary
@@ -248,6 +257,21 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	 */
 	protected void setTarget(Direction dir) {
 		target = dir;
+	}
+	
+	/**
+	 * Tries to find pacman in the habitat
+	 * @return Nearest pacman, or null if none was found
+	 */
+	protected Pacman findPacman(){
+		for (ISimObject obj: habitat.nearbyObjects(this,VIEW_DISTANCE)){
+			if (obj instanceof Pacman && canSee(obj)){
+				return (Pacman) obj;
+				
+			}
+		}
+		
+		return null;
 	}
 
 	/**

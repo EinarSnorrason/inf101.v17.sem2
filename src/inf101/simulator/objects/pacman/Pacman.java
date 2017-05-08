@@ -18,7 +18,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-public class Pacman extends AbstractMovingObject {
+public class Pacman extends AbstractMovingObject implements IEdibleObject {
 
 	private static final double SPEED = 1.5;
 	/**
@@ -81,7 +81,7 @@ public class Pacman extends AbstractMovingObject {
 	@Override
 	public void draw(GraphicsContext context) {
 		super.draw(context);
-		
+
 		if (!dead) {
 			// Draw viewing angle
 			context.setStroke(Color.GREEN.deriveColor(0.0, 1.0, 1.0, 0.5));
@@ -90,7 +90,7 @@ public class Pacman extends AbstractMovingObject {
 			context.drawImage(images[imageCounter / 2], 0, 0, getWidth(), getHeight());
 			imageCounter = (imageCounter + 1) % 8;
 		} else {
-			context.drawImage(deadImages[10-deathTimer / 20], 0, 0, getWidth(), getHeight());
+			context.drawImage(deadImages[10 - deathTimer / 20], 0, 0, getWidth(), getHeight());
 		}
 	}
 
@@ -189,14 +189,7 @@ public class Pacman extends AbstractMovingObject {
 		}
 	}
 
-	@Override
-	public void destroy() {
-		// Lets ghosts know pacman is dead
-		habitat.triggerEvent(new SimEvent(this, "Dead", null, null));
-		deathTimer = 11*10*2-1;
-		dead = true;
-
-	}
+	
 
 	/**
 	 * Pacman behaviour logic
@@ -233,17 +226,30 @@ public class Pacman extends AbstractMovingObject {
 		accelerateTo(SPEED, 0.2);
 
 		// If dead, stop moving and decrement the death timer
-		if (!dead){
+		if (!dead) {
 			super.step();
 		} else {
-			turnTowards(new Direction(180),90);
+			turnTowards(new Direction(180), 90);
 			deathTimer--;
-			if (deathTimer <= 0){
-				super.destroy();
+			if (deathTimer <= 0) {
+				destroy();
 			}
 		}
-		
-		
+
+	}
+
+	@Override
+	public double eat(double howMuch) {
+		// Lets ghosts know pacman is dead
+		habitat.triggerEvent(new SimEvent(this, "Dead", null, null));
+		deathTimer = 11 * 10 * 2 - 1;
+		dead = true;
+		return 0;
+	}
+
+	@Override
+	public double getNutritionalValue() {
+		return 0;
 	}
 
 }

@@ -2,6 +2,7 @@ package inf101.simulator.objects.pacman;
 
 import inf101.simulator.Habitat;
 import inf101.simulator.Position;
+import inf101.simulator.objects.ISimObject;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -20,7 +21,7 @@ public class YellowGhost extends AbstractGhost {
 	private int targetTimer;
 
 	public YellowGhost(Position pos, Habitat hab) {
-		super(pos, hab,"yellowGhost");
+		super(pos, hab, "yellowGhost");
 		targetTimer = TARGET_TIME;
 		ghostColor = Color.YELLOW;
 	}
@@ -34,14 +35,14 @@ public class YellowGhost extends AbstractGhost {
 			targetTimer = TARGET_TIME;
 		}
 
-		if (pacman != null) {
-			if (distanceTo(pacman) < SENSE_DISTANCE + getRadius()) {
-				setTarget(directionTo(pacman));
-			} else {
-				setTarget(directionTo(targetPos));
-			}
-
+		pacman = findPacman();
+		if (pacman != null && canSense(pacman)){
+			setTarget(directionTo(pacman));			
 		}
+		else{
+			setTarget(directionTo(targetPos));
+		}
+
 		targetTimer--;
 
 		super.step();
