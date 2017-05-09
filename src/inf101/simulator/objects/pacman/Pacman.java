@@ -124,6 +124,9 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 		double bestNutrition = 0;
 		double nutrition = 0;
 		IEdibleObject bestFood = null;
+		if (nearby == null){
+			nearby = habitat.nearbyObjects(this, VIEW_DISTANCE);
+		}
 
 		// Saves object as best food if it has higher nutrient content than
 		// current best food
@@ -144,7 +147,6 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 	 * Sets pacmans state to powered and sends a message to the ghosts
 	 */
 	private void powerUp() {
-		// the "0" in the data field lets ghosts know to be scared
 		habitat.triggerEvent(new SimEvent(this, "PowerUp", null, null));
 	}
 
