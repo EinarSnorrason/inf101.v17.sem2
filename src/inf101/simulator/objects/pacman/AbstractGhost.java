@@ -8,13 +8,21 @@ import inf101.simulator.Position;
 import inf101.simulator.objects.AbstractMovingObject;
 import inf101.simulator.objects.IEdibleObject;
 import inf101.simulator.objects.ISimObject;
+import inf101.simulator.objects.ISimObjectFactory;
 import inf101.simulator.objects.SimEvent;
+import inf101.simulator.objects.examples.SimFeed;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 /**
  * Abstract class which gives the behaviour of the ghosts that chase Pacman
+ * 
+ * Ghosts have three states that they change between:
+ * 
+ *  -normal: Follow normal behaviour and kill pacman if they catch him
+ *  -scared: Move slower and flee from pacman. If pacman eats them in this state, they become dead
+ *  -dead: Move very fast and flee from pacman. Cannot interact with pacman in any way
  * 
  * @author Einar Snorrason
  *
@@ -46,6 +54,7 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	 */
 	private static final double SCORE = 200.0;
 	private static final int RESPAWN_TIME = 500;
+	private static final int SCARED_TIME = 1000;
 
 	/**
 	 * We interact with pacman a lot, so we'll save him here
@@ -55,12 +64,13 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	/**
 	 * False if ghost has been eaten by pacman
 	 */
-	private boolean alive = true;
+	private boolean dead = false;
 
 	/**
 	 * Used to track how much time before
 	 */
 	private int respawnTimer = 0;
+	private int scaredTimer = 0;
 	private Direction target;
 
 	/**
@@ -69,11 +79,8 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	private boolean scared = false;
 	private double currentSpeed;
 
-	protected Color ghostColor = (Color.RED.deriveColor(0.0, 1.0, 1.0, 0.5));
-	protected Color scaredGhostColor = (Color.BLUE.deriveColor(0.0, 1.0, 1.0, 0.5));
-	
-	protected Image ghostImg;
-	protected Image deadGhostImg;
+	protected Image[] ghostImg = new Image[4];
+	protected Image[] deadGhostImg = new Image[4];
 	protected Image scaredGhostImg;
 
 	public AbstractGhost(Position pos, Habitat hab, String imageName) {
@@ -81,22 +88,31 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 		this.habitat = hab;
 		habitat.addListener(this, event -> handleEvent(event));
 		currentSpeed = SPEED;
-		scaredGhostImg = MediaHelper.getImage("scaredGhost.png");
 		
-			deadGhostImg = MediaHelper.getImage("deadGhost.png");
-			ghostImg = MediaHelper.getImage(imageName+".png");
+		// Load images
+		int n = 0;
+		for (int i=0; i<4; i++){
+			/*
+			 * Awful hack to make the images load in the order:
+			 * 4 - 1 - 3 - 2
+			 */
+			n += Math.pow(-1, i)*(4-i);
+			deadGhostImg[i] = MediaHelper.getImage("deadGhost"+n+".png");
+			ghostImg[i] = MediaHelper.getImage(imageName + n+".png");
+		}
+		scaredGhostImg = MediaHelper.getImage("scaredGhost.png");
+
 		
 
 	}
-
 	@Override
 	public double getHeight() {
-		return 50;
+		return SIZE;
 	}
 
 	@Override
 	public double getWidth() {
-		return 50;
+		return SIZE;
 	}
 
 	/**
@@ -104,59 +120,42 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	 */
 	public void handleEvent(SimEvent event) {
 
-		switch (event.getType()) {
-		case "PowerUp":
-			scared = true;
-			break;
+			if (event.getType().equals("PowerUp") && !dead){
+				scared = true;
+				scaredTimer = SCARED_TIME;
+			}
 
-		case "PowerDown":
-			scared = false;
-			break;
-		case "Dead":
-			// Causes ghost to kill itself
-			pacman = this;
-			destroy();
-		default:
-			break;
-		}
 	}
+
+	public boolean isScared() {
+		return scared || dead;
+	}
+
 	
-	public boolean isScared(){
-		return scared || !alive;
-	}
-
-	/**
-	 * Fetches pacman from the habitat and saves him privately so we don't have
-	 * to search for him every step
-	 * 
-	 * (this assumes there's only one pacman, may have to change that later)
-	 */
-	private boolean fetchPacman() {
-		pacman = (IEdibleObject) habitat.filterObjects((ISimObject obj) -> obj instanceof Pacman).get(0);
-		return pacman != null;
-	}
 
 	@Override
 	public void draw(GraphicsContext context) {
 		super.draw(context);
-		// Draw viewing angle
+//		// Draw viewing angle
+//
+		//context.setStroke(Color.RED.deriveColor(0.0, 1.0, 1.0, 0.5));
+		//GraphicsHelper.strokeArcAt(context, getWidth() / 2, getHeight() / 2, VIEW_DISTANCE, 0, VIEW_ANGLE);
 
-		context.setStroke(Color.RED.deriveColor(0.0, 1.0, 1.0, 0.5));
-		GraphicsHelper.strokeArcAt(context, getWidth() / 2, getHeight() / 2, VIEW_DISTANCE, 0, VIEW_ANGLE);
+		 double angle = getDirection().toAngle();
 
-		// Flip ghost if upside down
-		double angle = getDirection().toAngle();
-		if (angle < 90 && angle > -90) {
-			context.scale(1, -1);
-			context.translate(0, -getHeight());
-		}
-		// Draw ghost
+		 // Rotates and scales ghost-image so they always face up
+		 context.translate(getWidth()/2, getHeight()/2);
+		 context.rotate(-angle);
+		 context.scale(1, -1);
+		 context.translate(-getWidth()/2, -getHeight()/2);
+		 
 		if (scared) {
 			context.drawImage(scaredGhostImg, 0, 0, getWidth(), getHeight());
-		} else if (!alive) {
-			context.drawImage(deadGhostImg, 0, 0, getWidth(), getHeight());
+		} else if (dead) {
+			// Determines which image to use based on the angle
+			context.drawImage(deadGhostImg[(int) ((angle+405)%360)/90], 0, 0, getWidth(), getHeight());
 		} else {
-			context.drawImage(ghostImg, 0, 0, getWidth(), getHeight());
+			context.drawImage(ghostImg[(int)((angle+405)%360)/90], 0, 0, getWidth(), getHeight());
 		}
 
 	}
@@ -176,13 +175,14 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 		}
 		return Math.abs(getDirection().toAngle() - directionTo(obj).toAngle()) < VIEW_ANGLE / 2;
 	}
-	
+
 	/**
 	 * Checks if object is within sensing distance
+	 * 
 	 * @param obj
 	 * @return
 	 */
-	protected boolean canSense(ISimObject obj){
+	protected boolean canSense(ISimObject obj) {
 		return obj.getPosition().distanceTo(getPosition()) < SENSE_DISTANCE;
 	}
 
@@ -192,7 +192,6 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	@Override
 	public void step() {
 
-		
 		// by default, move slightly towards center
 		this.turnTowards(directionTo(habitat.getCenter()), 0.5);
 
@@ -202,52 +201,52 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 		}
 
 		// Move toward target or flee if not able to kill
-		if (scared || !alive) {
-			for (ISimObject obj: habitat.nearbyObjects(this,VIEW_DISTANCE)){
-				if (obj instanceof Pacman && canSee(obj)){
+		if (scared || dead) {
+			for (ISimObject obj : habitat.nearbyObjects(this, VIEW_DISTANCE)) {
+				if (obj instanceof Pacman && canSee(obj)) {
 					Direction opposite = directionTo(obj).turnBack();
 					turnTowards(opposite, TURN_SPEED);
-					
+
 				}
 			}
-//			if (canSee(pacman)) {
-//				Direction opposite = directionTo(pacman).turnBack();
-//				dir = dir.turnTowards(opposite, TURN_SPEED);
-//			} else if (target != null){
-//				turnTowards(target, TURN_SPEED);
-//			}
+			// if (canSee(pacman)) {
+			// Direction opposite = directionTo(pacman).turnBack();
+			// dir = dir.turnTowards(opposite, TURN_SPEED);
+			// } else if (target != null){
+			// turnTowards(target, TURN_SPEED);
+			// }
 		} else if (target != null) {
 			dir = dir.turnTowards(target, TURN_SPEED);
-			for (ISimObject obj: habitat.nearbyObjects(this,VIEW_DISTANCE)){
-				if (obj instanceof Pacman && contains(obj.getPosition())){
-					
+			for (ISimObject obj : habitat.nearbyObjects(this, VIEW_DISTANCE)) {
+				if (obj instanceof Pacman && contains(obj.getPosition())) {
+
 					((IEdibleObject) obj).eat(0);
-					
+
 				}
 			}
 		}
 
 		// Decrement respawn timer if neccesary
-		if (!alive) {
-			respawnTimer--;
-			if (respawnTimer <= 0) {
-				alive = true;
+		if (dead) {
+			accelerateTo(3 * currentSpeed, 0.3);
+			if (respawnTimer-- <= 0) {
+				dead = false;
 				scared = false;
 			}
-		}
-		
-		// Slowly speed up!
-		currentSpeed += 0.00005;
-		
-		// If dead, go faster
-		if (!alive){
-			accelerateTo(3*currentSpeed, 0.3);
-		} else {
+		} else if (scared){
+			accelerateTo(0.7*currentSpeed, 0.3);
+			if (scaredTimer-- <= 0){
+				scared = false;
+			}
+		}else {
 			accelerateTo(currentSpeed, 0.3);
 		}
-		
+
+		// Slowly speed up!
+		currentSpeed += 0.00005;
 
 		super.step();
+		checkState();
 	}
 
 	/**
@@ -258,19 +257,20 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	protected void setTarget(Direction dir) {
 		target = dir;
 	}
-	
+
 	/**
 	 * Tries to find pacman in the habitat
+	 * 
 	 * @return Nearest pacman, or null if none was found
 	 */
-	protected Pacman findPacman(){
-		for (ISimObject obj: habitat.nearbyObjects(this,VIEW_DISTANCE)){
-			if (obj instanceof Pacman && canSee(obj)){
+	protected Pacman findPacman() {
+		for (ISimObject obj : habitat.nearbyObjects(this, VIEW_DISTANCE)) {
+			if (obj instanceof Pacman && canSee(obj)) {
 				return (Pacman) obj;
-				
+
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -282,18 +282,35 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	 */
 	@Override
 	public double eat(double howMuch) {
-		alive = false;
+		dead = true;
 		scared = false;
 		respawnTimer = RESPAWN_TIME;
 		return SCORE;
 	}
 
 	/**
-	 * Returns the score the ghost gives (if it hasn't already been eaten)
+	 * Returns the score the ghost gives (if it is in the scared state)
 	 */
 	@Override
 	public double getNutritionalValue() {
-		return alive && scared ? SCORE : 0;
+		return !dead && scared ? SCORE : 0;
+	}
+
+	/**
+	 * Checks datainvariants of object
+	 * 
+	 * These are:
+	 * currentSpeed cannot be less than 0
+	 * cannot be dead and scared at the same time
+	 * 
+	 * @throws IllegalStateException
+	 */
+	private void checkState() {
+		if (currentSpeed < 0) {
+			throw new IllegalStateException("Speed cannot be negative");
+		} else if (dead && scared){
+			throw new IllegalStateException("Cannot be scared and dead at the same time");
+		}
 	}
 
 }

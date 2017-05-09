@@ -38,7 +38,6 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 	private static final double SENSE_DISTANCE = 75.0;
 	private static final double SIZE = 50.0;
 	private static final double TURN_SPEED = 1.5;
-	private static final int POWER_DURATION = 1000;
 	private Habitat habitat;
 	private Image[] images = new Image[4];
 	private Image[] deadImages = new Image[11];
@@ -48,14 +47,7 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 	private boolean dead = false;
 	private List<ISimObject> nearby = null;
 
-	/**
-	 * True when pacman eats a Super Pellet
-	 */
-	private boolean powered = false;
-	/**
-	 * Tracks how long pacman can be super
-	 */
-	private int powerTimer = 0;
+
 
 	public Pacman(Position pos, Habitat hab) {
 		super(new Direction(0), pos, SPEED);
@@ -140,20 +132,10 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 	 * Sets pacmans state to powered and sends a message to the ghosts
 	 */
 	private void powerUp() {
-		powered = true;
-		powerTimer = POWER_DURATION;
 		// the "0" in the data field lets ghosts know to be scared
 		habitat.triggerEvent(new SimEvent(this, "PowerUp", null, null));
 	}
 
-	/**
-	 * When the timer runs out, pacman is no longer super
-	 */
-	private void powerDown() {
-		powered = false;
-		// 1 in data field lets ghosts chase pacman again
-		habitat.triggerEvent(new SimEvent(this, "PowerDown", null, null));
-	}
 
 	/**
 	 * Go to the best food
@@ -214,15 +196,6 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 		goToFood();
 		avoidGhosts();
 
-		// Decrement timer if needed
-		if (powerTimer > 0) {
-			powerTimer--;
-			// If timer runs out, stop powerup
-			if (powerTimer <= 0) {
-				powerDown();
-			}
-		}
-
 		accelerateTo(SPEED, 0.2);
 
 		// If dead, stop moving and decrement the death timer
@@ -240,10 +213,12 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 
 	@Override
 	public double eat(double howMuch) {
-		// Lets ghosts know pacman is dead
-		habitat.triggerEvent(new SimEvent(this, "Dead", null, null));
-		deathTimer = 11 * 10 * 2 - 1;
-		dead = true;
+		if (!dead){
+			// Lets scoreboard know pacman is dead
+			habitat.triggerEvent(new SimEvent(this, "Dead", null, null));
+			deathTimer = deadImages.length * 10 * 2 - 1;
+			dead = true;	
+		}
 		return 0;
 	}
 

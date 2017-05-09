@@ -18,7 +18,6 @@ public class RedGhost extends AbstractGhost {
 
 	public RedGhost(Position pos, Habitat hab) {
 		super(pos, hab,"redGhost");
-		ghostColor = Color.RED;
 	}
 	
 	

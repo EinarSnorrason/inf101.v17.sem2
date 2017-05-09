@@ -16,7 +16,6 @@ public class PinkGhost extends AbstractGhost {
 
 	public PinkGhost(Position pos, Habitat hab) {
 		super(pos, hab,"pinkGhost");
-		ghostColor = Color.PINK;
 	}
 	
 	@Override
