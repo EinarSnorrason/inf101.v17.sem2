@@ -74,6 +74,7 @@ public class Scoreboard extends AbstractSimObject implements ISimScoreboard{
 	 * @param event from listener
 	 */
 	public void handleEvent(SimEvent event){
+		System.out.println(event.getType());
 		if (event.getType().equals("Points")){
 			score = (int) event.getData();
 			display("Score: "+score);

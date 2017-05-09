@@ -18,6 +18,18 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
+/**
+ * Class for pacman. 
+ * 
+ * Pacman will eat pellets and superpellets in the habitat and avoid ghosts. If
+ * he eats a superpellet, he sends a message to the ghosts that puts them in the 
+ * scared state. While a ghost is in the scared state, pacman will attempt to eat them.
+ * 
+ * If eaten, pacman enters the dead state, where he will play a short animation before disappearing
+ * @author Einar Snorrason
+ *
+ */
+
 public class Pacman extends AbstractMovingObject implements IEdibleObject {
 
 	private static final double SPEED = 1.5;
@@ -162,8 +174,8 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 	 */
 	private void avoidGhosts() {
 		for (ISimObject obj : nearby) {
-			if (canSee(obj) && obj instanceof AbstractGhost) {
-				if (!((AbstractGhost) obj).isScared()) {
+			if (canSee(obj) && obj instanceof IGhost) {
+				if (!((IGhost) obj).isScared()) {
 					Direction opposite = directionTo(obj).turnBack();
 					dir = dir.turnTowards(opposite, 1 + 4 * (1 - distanceTo(obj) / (VIEW_DISTANCE)));
 				}
@@ -226,5 +238,7 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 	public double getNutritionalValue() {
 		return 0;
 	}
+	
+	
 
 }
