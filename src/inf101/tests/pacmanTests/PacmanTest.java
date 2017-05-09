@@ -100,5 +100,19 @@ public class PacmanTest {
 		ghost.setScared(true);
 		assertEquals(ghost,pacman.getBestFood());
 	}
+	
+	/**
+	 * Pacman cant see food behind him
+	 */
+	@Test
+	public void cantSeeBehindTest(){
+		hab = new Habitat(main,1000,2000);
+		Pacman pacman = new Pacman(new Position(500,500),hab);
+		Pellet pellet = new Pellet(new Position(300,500));
+		hab.addObject(pacman);
+		hab.addObject(pellet);
+		
+		assertEquals(null,pacman.getBestFood());
+	}
 
 }
