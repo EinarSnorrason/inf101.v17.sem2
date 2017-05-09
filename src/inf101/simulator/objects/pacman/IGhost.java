@@ -1,8 +1,9 @@
 package inf101.simulator.objects.pacman;
 
+import inf101.simulator.objects.IEdibleObject;
 import inf101.simulator.objects.ISimObject;
 
-public interface IGhost {
+public interface IGhost extends IEdibleObject{
 
 	/**
 	 * 

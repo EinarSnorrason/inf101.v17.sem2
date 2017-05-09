@@ -29,7 +29,7 @@ import javafx.scene.paint.Color;
  *
  */
 
-public class AbstractGhost extends AbstractMovingObject implements IEdibleObject, IGhost {
+public class AbstractGhost extends AbstractMovingObject implements IGhost {
 	private static final double SPEED = 1.0;
 	private static final double TURN_SPEED = 1.0;
 	/**
@@ -286,9 +286,11 @@ public class AbstractGhost extends AbstractMovingObject implements IEdibleObject
 	/**
 	 * Checks datainvariants of object
 	 * 
-	 * These are: currentSpeed cannot be less than 0 cannot be dead and scared
-	 * at the same time
-	 * 
+	 * These are: 
+	 * -currentSpeed cannot be less than 0 
+	 * -cannot be dead and scared at the same time
+	 * -respawntimer cannot be greater than 0 while not dead
+	 * -scaredtimer cannot be greater than 0 while not scared
 	 * @throws IllegalStateException
 	 */
 	private void checkState() {
