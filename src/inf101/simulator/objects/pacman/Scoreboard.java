@@ -39,12 +39,16 @@ public class Scoreboard extends AbstractSimObject implements ISimScoreboard{
 		return 0;
 	}
 	
+	@Override
+	public String getMessage(){
+		return message;
+	}
+	
 	
 	@Override
 	public void display(String message) {
 		active = true;
 		this.message = message;
-		
 	}
 
 	@Override
@@ -61,12 +65,14 @@ public class Scoreboard extends AbstractSimObject implements ISimScoreboard{
 			context.setFill(Color.WHITE);
 			context.setFont(new Font(40));
 			context.fillText(message, 0, 0);
-			
 			context.restore();
 		}
 	}
 	
-	
+	/**
+	 * Handles events (gets points message or death message)
+	 * @param event from listener
+	 */
 	public void handleEvent(SimEvent event){
 		if (event.getType().equals("Points")){
 			score = (int) event.getData();

@@ -19,5 +19,11 @@ public interface ISimScoreboard {
 	 * Stop displaying message
 	 */
 	void stop();
+	
+	/**
+	 * 
+	 * @return the message the scoreboard is displaying
+	 */
+	String getMessage();
 
 }
