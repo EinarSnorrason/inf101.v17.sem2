@@ -26,10 +26,10 @@ public class Setup {
 		//SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new SimRepellant(pos), "SimRepellant™",
 		//		SimRepellant.PAINTER);
 		//SimMain.registerSimObjectFactory((Position pos,  Habitat hab) -> new SimAnimal(pos,hab),"SimAnimal", "pipp.png");
-		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new RedGhost(pos,hab), "Red ghost", "redGhost.png");
-		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new PinkGhost(pos,hab), "Pink ghost", "pinkGhost.png");
-		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new BlueGhost(pos,hab), "Blue ghost", "blueGhost.png");
-		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new YellowGhost(pos,hab), "Yellow ghost", "yellowGhost.png");
+		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new RedGhost(pos,hab), "Red ghost", "redGhost4.png");
+		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new PinkGhost(pos,hab), "Pink ghost", "pinkGhost4.png");
+		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new BlueGhost(pos,hab), "Blue ghost", "blueGhost4.png");
+		SimMain.registerSimObjectFactory((Position pos, Habitat hab) -> new YellowGhost(pos,hab), "Yellow ghost", "yellowGhost4.png");
 		
 	}
 	

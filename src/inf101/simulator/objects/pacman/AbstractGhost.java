@@ -68,7 +68,7 @@ public class AbstractGhost extends AbstractMovingObject implements IGhost {
 	private boolean dead = false;
 
 	/**
-	 * Used to track how much time before
+	 * Used to track how much time before change state
 	 */
 	private int respawnTimer = 0;
 	private int scaredTimer = 0;
@@ -101,6 +101,7 @@ public class AbstractGhost extends AbstractMovingObject implements IGhost {
 			ghostImg[i] = MediaHelper.getImage(imageName + n + ".png");
 		}
 		scaredGhostImg = MediaHelper.getImage("scaredGhost.png");
+
 
 	}
 
@@ -193,7 +194,7 @@ public class AbstractGhost extends AbstractMovingObject implements IGhost {
 	public void step() {
 
 		// by default, move slightly towards center
-		this.turnTowards(directionTo(habitat.getCenter()), 0.5);
+		turnTowards(directionTo(habitat.getCenter()), 0.5);
 
 		// go towards center if we're close to the border
 		if (!habitat.contains(getPosition(), getRadius() * 1.2)) {
@@ -289,8 +290,6 @@ public class AbstractGhost extends AbstractMovingObject implements IGhost {
 	 * These are: 
 	 * -currentSpeed cannot be less than 0 
 	 * -cannot be dead and scared at the same time
-	 * -respawntimer cannot be greater than 0 while not dead
-	 * -scaredtimer cannot be greater than 0 while not scared
 	 * @throws IllegalStateException
 	 */
 	private void checkState() {
