@@ -4,6 +4,17 @@ Student: Einar Snorrason
 
 ## Om funksjonaliteten
 
+Denne simulasjonen har objekter som beveger på seg i et habitat. Hiearkiet for disse objektene er:
+
+* AbstractSimObject implements ISimObject
+	* AbstractMovingObject implements IMovingObject
+		* SimAnimal
+		* Blob (Vet ikke helt hva dette er for)
+	* SimFeed implements IEdibleObject
+	* SimRepellant
+	
+Disse objektene blir lagt inn i habitatet gjennom Setup.setup(), som lager objekter og fabrikker for et gitt habitat. Etter det tegnes det opp på skjermen med main metoden. Objekter som implementerer AbstractMovingObject kan også bevege seg med step metoden.
+
 ## Svar på spørsmål
 
 1. Position.move returnerer en ny posisjon som er flyttet relativt til den gamle. Dette er forskjellig fra Position i Lab 5, som endret x og y-verdien i posisjonsobjektet i stedet for å lage en ny posisjon.
@@ -33,22 +44,32 @@ Fot eget design skal jeg lage en simulering av pacman. I begynnelsen av spillet 
 * Den røde sikter rett på pacman.
 * Den rosa sikter på et punkt foran pacman til den kommer til en viss avstand, så sikter den rett på.
 * Den blå snur i en tilfeldig retning på gitte tider, følger etter pacman ellers.
-* Den brune vandrer rundt helt tilfeldig.
+* Den brune vandrer rundt helt tilfeldig hvis pacman er ikke ret ved siden av den.
 
 Det finnes også superpellets, som dukker opp sjelden. Hvis pacman ser dem velger han å ta dem over de andre. Når han spiser en, blir spøkelsene blå og pacman prøver å spise dem. Da får han ekstra mange poeng, og spøkelset er "dødt" for en viss tid, før det kommer tilbake.
 
 Simulasjonen ender når pacman dør. Da vises hvor mange poeng han fikk, og det begynner på nytt.
 
+Poengene vises på et objekt som heter Scoreboard. Det tar meldinger fra pacman og viser tekst.
+
 Klasser:
 
-* Pacman - extends AbstractMovingObject
-* Pellet - extends AbstractSimObject
-* SuperPellet - extends AbstractSimObject
-* AbstractGhost - extends AbstractMovingObject
-..* RedGhost
-..* PinkGhost
-..* BlueGhost
-..* BrownGhost
+* Pacman - extends AbstractMovingObject implements IEdibleObject
+* Pellet - extends AbstractSimObject implements IEdibleObject
+* SuperPellet - extends AbstractSimObject implements IEdibleObject
+* AbstractGhost - extends AbstractMovingObject implements IEdibleObject, IGhost
+	* RedGhost
+	* PinkGhost
+	* BlueGhost
+	* BrownGhost
+* Scoreboard - extends AbstractSimObject implements IScoreboard
+
+Ekstra ting som må implementerers:
+
+Spøkelsene må bli redde når pacman spiser en pellet- lag en listener og endre fasen på spøkelsene når et event kommer inn.
+
+Endre canSee() slik at de kan se ting som er veldig nær fra alle retninger. Dette simulerer hørsel osv.
+
 
 ## Kilder til media
 
