@@ -40,7 +40,7 @@ public abstract class AbstractMovingObject extends AbstractSimObject implements 
 	/**
 	 * Turns towards a given direction
 	 */
-	protected void turnTowards(Direction dir, double deltaAngle){
+	public void turnTowards(Direction dir, double deltaAngle){
 		this.dir = this.dir.turnTowards(dir, deltaAngle);
 	}
 	

@@ -184,7 +184,7 @@ public class AbstractGhost extends AbstractMovingObject implements IGhost {
 	 */
 	@Override
 	public boolean canSense(ISimObject obj) {
-		return obj.getPosition().distanceTo(getPosition()) < SENSE_DISTANCE;
+		return obj.getPosition().distanceTo(getPosition()) < SENSE_DISTANCE+ getRadius();
 	}
 
 	/**
@@ -252,7 +252,7 @@ public class AbstractGhost extends AbstractMovingObject implements IGhost {
 	 */
 	@Override
 	public Pacman findPacman() {
-		for (ISimObject obj : habitat.nearbyObjects(this, VIEW_DISTANCE)) {
+		for (ISimObject obj : habitat.nearbyObjects(this, VIEW_DISTANCE + getRadius())) {
 			if (obj instanceof Pacman && canSee(obj)) {
 				return (Pacman) obj;
 
@@ -282,6 +282,11 @@ public class AbstractGhost extends AbstractMovingObject implements IGhost {
 	@Override
 	public double getNutritionalValue() {
 		return !dead && scared ? SCORE : 0;
+	}
+	
+	public boolean isDead(){
+		
+		return dead;
 	}
 
 	/**

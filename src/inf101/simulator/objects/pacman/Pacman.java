@@ -29,7 +29,6 @@ import javafx.scene.paint.Color;
  * @author Einar Snorrason
  *
  */
-
 public class Pacman extends AbstractMovingObject implements IEdibleObject {
 
 	private static final double SPEED = 1.5;
@@ -125,7 +124,7 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 		double nutrition = 0;
 		IEdibleObject bestFood = null;
 		if (nearby == null){
-			nearby = habitat.nearbyObjects(this, VIEW_DISTANCE);
+			nearby = habitat.nearbyObjects(this, VIEW_DISTANCE + getRadius());
 		}
 
 		// Saves object as best food if it has higher nutrient content than
@@ -179,7 +178,8 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 			if (canSee(obj) && obj instanceof IGhost) {
 				if (!((IGhost) obj).isScared()) {
 					Direction opposite = directionTo(obj).turnBack();
-					dir = dir.turnTowards(opposite, 1 + 4 * (1 - distanceTo(obj) / (VIEW_DISTANCE)));
+					// The closer the ghost, the faster pacman turns away
+					turnTowards(opposite, 1 + 4 * (1 - distanceTo(obj) / (VIEW_DISTANCE)));
 				}
 			}
 		}
@@ -241,6 +241,18 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 		return 0;
 	}
 	
+	/**
+	 * 
+	 * @return true if pacman is dead
+	 */
+	public boolean isDead(){
+		return dead;
+	}
+	
+	
+	private void checkState(){
+		
+	}
 	
 
 }
