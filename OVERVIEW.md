@@ -70,6 +70,7 @@ Spøkelsene må bli redde når pacman spiser en pellet- lag en listener og endre
 
 Endre canSee() slik at de kan se ting som er veldig nær fra alle retninger. Dette simulerer hørsel osv.
 
+Gi pacman metode til å gi events når han spiser
 
 ## Kilder til media
 
