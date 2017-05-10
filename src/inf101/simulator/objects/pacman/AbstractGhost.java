@@ -1,5 +1,7 @@
 package inf101.simulator.objects.pacman;
 
+import java.util.Arrays;
+
 import inf101.simulator.Direction;
 import inf101.simulator.GraphicsHelper;
 import inf101.simulator.Habitat;
@@ -303,6 +305,60 @@ public class AbstractGhost extends AbstractMovingObject implements IGhost {
 		} else if (dead && scared) {
 			throw new IllegalStateException("Cannot be scared and dead at the same time");
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(currentSpeed);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + (dead ? 1231 : 1237);
+		result = prime * result + Arrays.hashCode(deadGhostImg);
+		result = prime * result + Arrays.hashCode(ghostImg);
+		result = prime * result + respawnTimer;
+		result = prime * result + (scared ? 1231 : 1237);
+		result = prime * result + ((scaredGhostImg == null) ? 0 : scaredGhostImg.hashCode());
+		result = prime * result + scaredTimer;
+		result = prime * result + ((target == null) ? 0 : target.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AbstractGhost other = (AbstractGhost) obj;
+		if (Double.doubleToLongBits(currentSpeed) != Double.doubleToLongBits(other.currentSpeed))
+			return false;
+		if (dead != other.dead)
+			return false;
+		if (!Arrays.equals(deadGhostImg, other.deadGhostImg))
+			return false;
+		if (!Arrays.equals(ghostImg, other.ghostImg))
+			return false;
+		if (respawnTimer != other.respawnTimer)
+			return false;
+		if (scared != other.scared)
+			return false;
+		if (scaredGhostImg == null) {
+			if (other.scaredGhostImg != null)
+				return false;
+		} else if (!scaredGhostImg.equals(other.scaredGhostImg))
+			return false;
+		if (scaredTimer != other.scaredTimer)
+			return false;
+		if (target == null) {
+			if (other.target != null)
+				return false;
+		} else if (!target.equals(other.target))
+			return false;
+		return true;
 	}
 
 }

@@ -101,7 +101,7 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 	 * Checks if object within view distance is visible.
 	 * 
 	 * @param obj
-	 * @return
+	 * @return true if object is visible
 	 */
 	public boolean canSee(ISimObject obj) {
 		if (!habitat.contains(obj.getPosition())) {
@@ -222,6 +222,8 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 				destroy();
 			}
 		}
+		
+		checkState();
 
 	}
 
@@ -249,9 +251,57 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 		return dead;
 	}
 	
-	
+	/**
+	 * Check datainvariants
+	 * 
+	 * @throws IllegalArgumentException if :
+	 * -Score is <0
+	 * - death timer is >0 while alive
+	 */
 	private void checkState(){
-		
+		if (score<0){
+			throw new IllegalArgumentException("Score cannot be less than 0");
+		} else if (!dead && deathTimer>0){
+			throw new IllegalArgumentException("Death timer cannot be >0 while alive");
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (dead ? 1231 : 1237);
+		result = prime * result + deathTimer;
+		result = prime * result + ((habitat == null) ? 0 : habitat.hashCode());
+		result = prime * result + imageCounter;
+		result = prime * result + ((nearby == null) ? 0 : nearby.hashCode());
+		result = prime * result + score;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Pacman other = (Pacman) obj;
+		if (dead != other.dead)
+			return false;
+		if (deathTimer != other.deathTimer)
+			return false;
+		if (imageCounter != other.imageCounter)
+			return false;
+		if (nearby == null) {
+			if (other.nearby != null)
+				return false;
+		} else if (!nearby.equals(other.nearby))
+			return false;
+		if (score != other.score)
+			return false;
+		return true;
 	}
 	
 
