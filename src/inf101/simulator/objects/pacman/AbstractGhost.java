@@ -92,6 +92,9 @@ public class AbstractGhost extends AbstractMovingObject implements IGhost {
 	private boolean scared = false;
 	private double currentSpeed;
 
+	/**
+	 * For saving images
+	 */
 	protected Image[] ghostImg = new Image[4];
 	protected Image[] deadGhostImg = new Image[4];
 	protected Image scaredGhostImg;

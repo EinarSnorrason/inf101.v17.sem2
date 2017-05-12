@@ -50,7 +50,7 @@ Det finnes også superpellets, som dukker opp sjelden. Hvis pacman ser dem velge
 
 Simulasjonen ender når pacman dør. Da vises hvor mange poeng han fikk, og det begynner på nytt.
 
-Poengene vises på et objekt som heter Scoreboard. Det tar meldinger fra pacman og viser tekst.
+Poengene vises på et objekt som heter Scoreboard. Det tar meldinger fra pacman og viser tekst. Når pacman spiser noe sender han et event med antall poeng han har, og det blir så vist i Scoreboard-objektet
 
 Klasser:
 
