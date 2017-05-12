@@ -28,6 +28,9 @@ import javafx.scene.paint.Color;
  * If eaten, pacman enters the dead state, where he will play a short animation before disappearing
  * @author Einar Snorrason
  *
+ * Datainvariants:
+ * -Score cannot be <0
+ * - death timer cannot be >0 while alive
  */
 public class Pacman extends AbstractMovingObject implements IEdibleObject {
 
@@ -54,6 +57,9 @@ public class Pacman extends AbstractMovingObject implements IEdibleObject {
 	private Image[] deadImages = new Image[11];
 	private int imageCounter = 0;
 	private int score;
+	/**
+	 * Used to count down time between pacman is eaten and pacman is destroyed
+	 */
 	private int deathTimer;
 	private boolean dead = false;
 	private List<ISimObject> nearby = null;

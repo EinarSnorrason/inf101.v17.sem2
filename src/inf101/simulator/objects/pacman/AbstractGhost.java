@@ -27,12 +27,22 @@ import javafx.scene.paint.Color;
  * become dead -dead: Move very fast and flee from pacman. Cannot interact with
  * pacman in any way
  * 
+ * The ghosts will slowly speed up until their speed is faster than pacman. 
+ * This ensures that they will eventually catch him.
+ * 
+ * Datainvariants:
+ * 
+ * -currentSpeed cannot be less than 0
+ * -currentSpeed cannot be greater than max speed
+ * -cannot be dead and scared at the same time
+ * 
  * @author Einar Snorrason
  *
  */
 
 public class AbstractGhost extends AbstractMovingObject implements IGhost {
-	private static final double SPEED = 1.0;
+	private static final double STARTING_SPEED = 1.0;
+	private static final double MAX_SPEED = 1.7;
 	private static final double TURN_SPEED = 1.0;
 	/**
 	 * Distance where objects become visible
@@ -87,10 +97,10 @@ public class AbstractGhost extends AbstractMovingObject implements IGhost {
 	protected Image scaredGhostImg;
 
 	public AbstractGhost(Position pos, Habitat hab, String imageName) {
-		super(new Direction(Math.random() * 360), pos, SPEED);
+		super(new Direction(Math.random() * 360), pos, STARTING_SPEED);
 		this.habitat = hab;
 		habitat.addListener(this, event -> handleEvent(event));
-		currentSpeed = SPEED;
+		currentSpeed = STARTING_SPEED;
 
 		// Load images
 		int n = 0;
@@ -234,7 +244,7 @@ public class AbstractGhost extends AbstractMovingObject implements IGhost {
 		}
 
 		// Slowly speed up!
-		currentSpeed += 0.00005;
+		currentSpeed = Math.min(currentSpeed+0.00005, MAX_SPEED);
 
 		super.step();
 		checkState();
@@ -295,14 +305,17 @@ public class AbstractGhost extends AbstractMovingObject implements IGhost {
 	 * Checks datainvariants of object
 	 * 
 	 * These are: 
-	 * -currentSpeed cannot be less than 0 
+	 * -currentSpeed cannot be less than 0
+	 * -currentSpeed cannot be greater than max speed
 	 * -cannot be dead and scared at the same time
 	 * @throws IllegalStateException
 	 */
 	private void checkState() {
 		if (currentSpeed < 0) {
 			throw new IllegalStateException("Speed cannot be negative");
-		} else if (dead && scared) {
+		}else if (currentSpeed > MAX_SPEED){
+			throw new IllegalStateException("Speed cannot exceed max speed");
+		}else if (dead && scared) {
 			throw new IllegalStateException("Cannot be scared and dead at the same time");
 		}
 	}
