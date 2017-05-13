@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import inf101.simulator.images.ImageLoader;
 import inf101.simulator.objects.ISimObjectFactory;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -283,6 +284,10 @@ public class SimMain extends Application {
 			} else if (code == KeyCode.P) {
 				paused = !paused;
 				event.consume();
+			} else if (code == KeyCode.R){
+				// Reset map
+				Setup.restart(this, habitat);
+				
 			} else if (code == KeyCode.COMMA) {
 				showAnnotations = !showAnnotations;
 				event.consume();

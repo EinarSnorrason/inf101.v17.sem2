@@ -60,4 +60,6 @@ public class SimFeed extends AbstractSimObject implements IEdibleObject {
 	@Override
 	public void step() {
 	}
+	
+	
 }

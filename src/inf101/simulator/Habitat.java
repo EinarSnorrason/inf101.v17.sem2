@@ -351,6 +351,14 @@ public class Habitat {
 	public void removeObject(ISimObject obj) {
 		obj.destroy();
 	}
+	
+	/**
+	 * Removes all objects and listeners in habitat
+	 */
+	public void removeAll(){
+		objects.clear();
+		listeners.clear();
+	}
 
 	public void step() {
 		// for(int i = 0; i < ducks.size(); i++)

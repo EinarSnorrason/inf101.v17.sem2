@@ -36,6 +36,15 @@ public abstract class AbstractMovingObject extends AbstractSimObject implements 
 			speed -= Math.min(increment, speed - targetSpeed);
 		}
 	}
+	
+	/**
+	 * Turns towards a given direction
+	 */
+	public void turnTowards(Direction dir, double deltaAngle){
+		this.dir = this.dir.turnTowards(dir, deltaAngle);
+	}
+	
+	
 
 	@Override
 	public void draw(GraphicsContext context) {
